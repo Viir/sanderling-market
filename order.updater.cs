@@ -116,6 +116,8 @@ double CalcMaxPrice(double startPrice, double highestPrice, double margin) {
 
 bool ClickMenuEntryOnMenuRootJason(IUIElement MenuRoot, string MenuEntryRegexPattern) {
     int retryCount = 0;
+    bool success = true;
+    
     if (MenuRoot == null) {
         Host.Log("Fatal: Right click menu item is null");
     }
@@ -133,12 +135,12 @@ bool ClickMenuEntryOnMenuRootJason(IUIElement MenuRoot, string MenuEntryRegexPat
         Menu = Measurement?.Menu?.FirstOrDefault();
         MenuEntry = Menu?.EntryFirstMatchingRegexPattern(MenuEntryRegexPattern, RegexOptions.IgnoreCase);
         if (retryCount++>10) {
-            return false;
+            success = false;
         }
     }
 
     Sanderling.MouseClickLeft(MenuEntry);
-    return true;
+    return success;
 }
 
 void ClickMenuEntryOnMenuRoot(IUIElement MenuRoot, string MenuEntryRegexPattern) {
