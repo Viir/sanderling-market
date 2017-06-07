@@ -2,12 +2,14 @@ using Parse = Sanderling.Parse;
 using MemoryStruct = Sanderling.Interface.MemoryStruct;
 using System.IO;
 
-//TODO: Nice if top price is too high then use next price.
-//TODO: Maybe convert list to array and find first price < orderEntry.HighestPrice. If not mine set price.
+//TODO: Need to break out of loops if in them for too long
+//TODO: 
+//Host.Break(); // Halts execution until user continues
+
 //WARNING WARNING WARNING - Filter must be set to station only
+
 var Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
 string inputFileName = @"D:\MarketLog.txt";
-//double maxPriceChangePercent = 5;
 bool ContainsBlueBackground(MemoryStruct.IListEntry Entry) = >Entry ? .ListBackgroundColor ? .Any(BackgroundColor = >111 < BackgroundColor ? .OMilli && 777 < BackgroundColor ? .BMilli && BackgroundColor ? .RMilli < 111 && BackgroundColor ? .GMilli < 111) ? ?false;
 bool ContainsGreenBackground(MemoryStruct.IListEntry Entry) = >Entry ? .ListBackgroundColor ? .Any(BackgroundColor = >111 < BackgroundColor ? .OMilli && 777 < BackgroundColor ? .GMilli && BackgroundColor ? .RMilli < 111 && BackgroundColor ? .BMilli < 111) ? ?false;
 bool ContainsBlackBackground(MemoryStruct.IListEntry Entry) = >Entry ? .ListBackgroundColor ? .Any(BackgroundColor = >BackgroundColor ? .OMilli > 450 && BackgroundColor ? .BMilli > 240 && BackgroundColor ? .RMilli > 240 && BackgroundColor ? .GMilli > 240) ? ?true;
