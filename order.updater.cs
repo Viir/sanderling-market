@@ -2,22 +2,22 @@ using Parse = Sanderling.Parse;
 using MemoryStruct = Sanderling.Interface.MemoryStruct;
 using System.IO;
 
-//TODO: Need to break out of loops if in them for too long...
+//TODO: 
 //TODO: 
 //Host.Break(); // Halts execution until user continues
 
 //WARNING WARNING WARNING - Filter must be set to station only
 
-var Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-string inputFileName = @"D:\MarketLog.txt";
-bool ContainsBlueBackground(MemoryStruct.IListEntry Entry) = >Entry ? .ListBackgroundColor ? .Any(BackgroundColor = >111 < BackgroundColor ? .OMilli && 777 < BackgroundColor ? .BMilli && BackgroundColor ? .RMilli < 111 && BackgroundColor ? .GMilli < 111) ? ?false;
-bool ContainsGreenBackground(MemoryStruct.IListEntry Entry) = >Entry ? .ListBackgroundColor ? .Any(BackgroundColor = >111 < BackgroundColor ? .OMilli && 777 < BackgroundColor ? .GMilli && BackgroundColor ? .RMilli < 111 && BackgroundColor ? .BMilli < 111) ? ?false;
-bool ContainsBlackBackground(MemoryStruct.IListEntry Entry) = >Entry ? .ListBackgroundColor ? .Any(BackgroundColor = >BackgroundColor ? .OMilli > 450 && BackgroundColor ? .BMilli > 240 && BackgroundColor ? .RMilli > 240 && BackgroundColor ? .GMilli > 240) ? ?true;
-bool MatchingOrder(MemoryStruct.IListEntry Entry) = >Entry ? .LabelText ? .Any(someText = >someText.Text.ToString().RegexMatchSuccess(orderName)) ? ?false;
-List < OrderEntry > orderEntries = new List < OrderEntry > ();
+var Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+string inputFileName = @"C:\Users\Jason\Documents\Visual Studio 2017\Projects\GitHub Eve\trunk\MarketLog.txt";
+bool ContainsBlueBackground(MemoryStruct.IListEntry Entry)=>Entry?.ListBackgroundColor?.Any(BackgroundColor=>111 < BackgroundColor?.OMilli && 777 < BackgroundColor?.BMilli && BackgroundColor?.RMilli < 111 && BackgroundColor?.GMilli < 111) ?? false;
+bool ContainsGreenBackground(MemoryStruct.IListEntry Entry)=>Entry?.ListBackgroundColor?.Any(BackgroundColor=>111 < BackgroundColor?.OMilli && 777 < BackgroundColor?.GMilli && BackgroundColor?.RMilli < 111 && BackgroundColor?.BMilli < 111) ?? false;
+bool ContainsBlackBackground(MemoryStruct.IListEntry Entry)=>Entry?.ListBackgroundColor?.Any(BackgroundColor=>BackgroundColor?.OMilli > 450 && BackgroundColor?.BMilli > 240 && BackgroundColor?.RMilli > 240 && BackgroundColor?.GMilli > 240) ?? true;
+bool MatchingOrder(MemoryStruct.IListEntry Entry)=>Entry?.LabelText?.Any(someText=>someText.Text.ToString().RegexMatchSuccess(orderName)) ?? false;
+List<OrderEntry> orderEntries = new List<OrderEntry>();
 string orderName = "";
 Random rnd = new Random();
-IWindow ModalUIElement = >Measurement ? .EnumerateReferencedUIElementTransitive() ? .OfType < IWindow > () ? .Where(window = >window ? .isModal ? ?false) ? .OrderByDescending(window = >window ? .InTreeIndex ? ?int.MinValue) ? .FirstOrDefault();
+IWindow ModalUIElement=>Measurement?.EnumerateReferencedUIElementTransitive()?.OfType<IWindow>()?.Where(window=>window?.isModal ?? false)?.OrderByDescending(window=>window?.InTreeIndex ?? int.MinValue)?.FirstOrDefault();
 
 using(FileStream fileStream = new FileStream(inputFileName, FileMode.OpenOrCreate, FileAccess.ReadWrite)) {
 	using(var reader = new StreamReader(fileStream)) {
@@ -32,7 +32,8 @@ using(FileStream fileStream = new FileStream(inputFileName, FileMode.OpenOrCreat
 					OrderEntry newOrder = new OrderEntry(values[0].ToString(), values[1].ToString(), Convert.ToDouble(values[2]), minPrice, maxPrice, Convert.ToDouble(values[5]), Convert.ToInt32(values[6]), Convert.ToDouble(values[7]), Convert.ToDateTime(values[8]), Convert.ToBoolean(values[9]));
 					orderEntries.Add(newOrder);
 				}
-			} catch {
+			}
+			catch {
 				Host.Log("Couldn't read: " + line.ToString());
 			}
 		}
@@ -115,29 +116,29 @@ double CalcMaxPrice(double startPrice, double highestPrice, double margin) {
 
 bool ClickMenuEntryOnMenuRootJason(IUIElement MenuRoot, string MenuEntryRegexPattern) {
 	int retryCount = 0;
-    if (MenuRoot == null) {
+	if (MenuRoot == null) {
 		Host.Log("Fatal: Right click menu item is null");
 	}
 
 	Sanderling.MouseClickRight(MenuRoot);
 	Host.Delay(1000);
-	var Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-	var Menu = Measurement ? .Menu ? .FirstOrDefault();
-	var MenuEntry = Menu ? .EntryFirstMatchingRegexPattern(MenuEntryRegexPattern, RegexOptions.IgnoreCase);
+	var Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+	var Menu = Measurement?.Menu?.FirstOrDefault();
+	var MenuEntry = Menu?.EntryFirstMatchingRegexPattern(MenuEntryRegexPattern, RegexOptions.IgnoreCase);
 
 	while (MenuEntry == null) {
 		Sanderling.MouseClickRight(MenuRoot);
 		Host.Delay(2000);
-		Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-		Menu = Measurement ? .Menu ? .FirstOrDefault();
-		MenuEntry = Menu ? .EntryFirstMatchingRegexPattern(MenuEntryRegexPattern, RegexOptions.IgnoreCase);
-        if(retryCount++ > 10) {
-            return false;
-        }
+		Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+		Menu = Measurement?.Menu?.FirstOrDefault();
+		MenuEntry = Menu?.EntryFirstMatchingRegexPattern(MenuEntryRegexPattern, RegexOptions.IgnoreCase);
+		if (retryCount++>10) {
+			return false;
+		}
 	}
 
 	Sanderling.MouseClickLeft(MenuEntry);
-    return true;
+	return true;
 }
 
 void ClickMenuEntryOnMenuRoot(IUIElement MenuRoot, string MenuEntryRegexPattern) {
@@ -145,9 +146,9 @@ void ClickMenuEntryOnMenuRoot(IUIElement MenuRoot, string MenuEntryRegexPattern)
 
 	Host.Delay(1000);
 
-	var Menu = Measurement ? .Menu ? .FirstOrDefault();
+	var Menu = Measurement?.Menu?.FirstOrDefault();
 
-	var MenuEntry = Menu ? .EntryFirstMatchingRegexPattern(MenuEntryRegexPattern, RegexOptions.IgnoreCase);
+	var MenuEntry = Menu?.EntryFirstMatchingRegexPattern(MenuEntryRegexPattern, RegexOptions.IgnoreCase);
 
 	Sanderling.MouseClickLeft(MenuEntry);
 }
@@ -163,7 +164,7 @@ void EnterPrice(double price) {
 }
 
 void CloseModalUIElementYes() {
-	var ButtonClose = ModalUIElement ? .ButtonText ? .FirstOrDefault(button = >(button ? .Text).RegexMatchSuccessIgnoreCase("yes"));
+	var ButtonClose = ModalUIElement?.ButtonText?.FirstOrDefault(button=>(button?.Text).RegexMatchSuccessIgnoreCase("yes"));
 
 	Sanderling.MouseClickLeft(ButtonClose);
 }
@@ -203,9 +204,9 @@ loopTryAgain:
 
 if (orderEntries.Count > 0) {
 	for (;;) {
-        
-        Something_has_gone_wrong:
-        
+
+		Something_has_gone_wrong: //label to jump back to if something goes wrong
+
 		foreach(OrderEntry orderEntry in orderEntries) {
 
 			if (orderEntry.OrderComplete == false) {
@@ -216,137 +217,137 @@ if (orderEntries.Count > 0) {
 				DateTime b = DateTime.Now;
 				if (Math.Round(b.Subtract(a).TotalSeconds, 0) > 320) {
 					timeToCheck = true;
-					Host.Log("Time to check: " + orderEntry.Name + " - " + orderEntry.Type);
+					Host.Log("Time to check: " + orderEntry.Name);
 				}
 
 				if (timeToCheck) {
 
 					//Ensure Market Window is open
-					while (null == Measurement ? .WindowRegionalMarket) {
+					while (null == Measurement?.WindowRegionalMarket) {
 						Host.Log("Open Market");
-						if (null == Measurement ? .WindowRegionalMarket) {
-							Sanderling.MouseClickLeft(Measurement ? .Neocom ? .MarketButton);
+						if (null == Measurement?.WindowRegionalMarket) {
+							Sanderling.MouseClickLeft(Measurement?.Neocom?.MarketButton);
 						}
 						Host.Delay(2000);
-						Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
+						Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
 					}
 
 					//Wait for My Orders Button to appear
-					while (Measurement ? .WindowRegionalMarket ? .FirstOrDefault() ? .RightTabGroup ? .ListTab[2] ? .RegionInteraction == null) {
-						Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
+					while (Measurement?.WindowRegionalMarket?.FirstOrDefault()?.RightTabGroup?.ListTab[2]?.RegionInteraction == null) {
+						Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
 						Host.Delay(500);
 					}
 
 					//Click My Orders
-					Sanderling.MouseClickLeft(Measurement ? .WindowRegionalMarket ? .FirstOrDefault() ? .RightTabGroup ? .ListTab[2] ? .RegionInteraction);
+					Sanderling.MouseClickLeft(Measurement?.WindowRegionalMarket?.FirstOrDefault()?.RightTabGroup?.ListTab[2]?.RegionInteraction);
 
 					//Wait for MyOrders to be populated
-					Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-					var myOrders = Measurement ? .WindowRegionalMarket ? .FirstOrDefault() ? .MyOrders;
+					Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+					var myOrders = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.MyOrders;
 					while (myOrders == null) {
-						Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-						Sanderling.MouseClickLeft(Measurement ? .WindowRegionalMarket ? .FirstOrDefault() ? .RightTabGroup ? .ListTab[2] ? .RegionInteraction);
-						myOrders = Measurement ? .WindowRegionalMarket ? .FirstOrDefault() ? .MyOrders;
+						Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+						Sanderling.MouseClickLeft(Measurement?.WindowRegionalMarket?.FirstOrDefault()?.RightTabGroup?.ListTab[2]?.RegionInteraction);
+						myOrders = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.MyOrders;
 						Host.Delay(1000);
 					}
 
-					var orderSectionMyOrders = myOrders ? .BuyOrderView;
+					var orderSectionMyOrders = myOrders?.BuyOrderView;
 					if (orderEntry.Type.Equals("Sell Order")) {
-						orderSectionMyOrders = myOrders ? .SellOrderView;
+						orderSectionMyOrders = myOrders?.SellOrderView;
 					}
 
 					//Make sure Buy/Sell section is visible
 					while (orderSectionMyOrders == null) {
-						Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-						myOrders = Measurement ? .WindowRegionalMarket ? .FirstOrDefault() ? .MyOrders;
-						orderSectionMyOrders = myOrders ? .BuyOrderView;
+						Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+						myOrders = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.MyOrders;
+						orderSectionMyOrders = myOrders?.BuyOrderView;
 						if (orderEntry.Type.Equals("Sell Order")) {
-							orderSectionMyOrders = myOrders ? .SellOrderView;
+							orderSectionMyOrders = myOrders?.SellOrderView;
 						}
 						Host.Delay(500);
 
 						while (orderSectionMyOrders == null) {
 							Host.Delay(500);
-							Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
+							Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
 						}
 					}
 
 					//Find an order in the list that matches order read from file and View Market Details
 					orderName = orderEntry.Name.ToString();
-					var getMatchingOrder = orderSectionMyOrders ? .Entry ? .FirstOrDefault(MatchingOrder);
+					var getMatchingOrder = orderSectionMyOrders?.Entry?.FirstOrDefault(MatchingOrder);
 
 					bool foundOrder = false;
 					if (getMatchingOrder != null) {
 						foundOrder = true;
 					} else {
 						Host.Delay(1000);
-						Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-						myOrders = Measurement ? .WindowRegionalMarket ? .FirstOrDefault() ? .MyOrders;
-						orderSectionMyOrders = myOrders ? .BuyOrderView;
+						Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+						myOrders = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.MyOrders;
+						orderSectionMyOrders = myOrders?.BuyOrderView;
 						if (orderEntry.Type.Equals("Sell Order")) {
-							orderSectionMyOrders = myOrders ? .SellOrderView;
+							orderSectionMyOrders = myOrders?.SellOrderView;
 						}
-						getMatchingOrder = orderSectionMyOrders ? .Entry ? .FirstOrDefault(MatchingOrder);
+						getMatchingOrder = orderSectionMyOrders?.Entry?.FirstOrDefault(MatchingOrder);
 						if (getMatchingOrder != null) {
 							foundOrder = true;
 							break;
 						}
 						Host.Delay(1000);
-						Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-						myOrders = Measurement ? .WindowRegionalMarket ? .FirstOrDefault() ? .MyOrders;
-						orderSectionMyOrders = myOrders ? .BuyOrderView;
+						Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+						myOrders = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.MyOrders;
+						orderSectionMyOrders = myOrders?.BuyOrderView;
 						if (orderEntry.Type.Equals("Sell Order")) {
-							orderSectionMyOrders = myOrders ? .SellOrderView;
+							orderSectionMyOrders = myOrders?.SellOrderView;
 						}
-						getMatchingOrder = orderSectionMyOrders ? .Entry ? .FirstOrDefault(MatchingOrder);
+						getMatchingOrder = orderSectionMyOrders?.Entry?.FirstOrDefault(MatchingOrder);
 						if (getMatchingOrder != null) {
 							foundOrder = true;
 							break;
 						}
 						Host.Delay(1000);
-						Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-						myOrders = Measurement ? .WindowRegionalMarket ? .FirstOrDefault() ? .MyOrders;
-						orderSectionMyOrders = myOrders ? .BuyOrderView;
+						Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+						myOrders = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.MyOrders;
+						orderSectionMyOrders = myOrders?.BuyOrderView;
 						if (orderEntry.Type.Equals("Sell Order")) {
-							orderSectionMyOrders = myOrders ? .SellOrderView;
+							orderSectionMyOrders = myOrders?.SellOrderView;
 						}
-						getMatchingOrder = orderSectionMyOrders ? .Entry ? .FirstOrDefault(MatchingOrder);
+						getMatchingOrder = orderSectionMyOrders?.Entry?.FirstOrDefault(MatchingOrder);
 						if (getMatchingOrder != null) {
 							foundOrder = true;
 							break;
 						}
 						Host.Delay(1000);
-						Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-						myOrders = Measurement ? .WindowRegionalMarket ? .FirstOrDefault() ? .MyOrders;
-						orderSectionMyOrders = myOrders ? .BuyOrderView;
+						Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+						myOrders = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.MyOrders;
+						orderSectionMyOrders = myOrders?.BuyOrderView;
 						if (orderEntry.Type.Equals("Sell Order")) {
-							orderSectionMyOrders = myOrders ? .SellOrderView;
+							orderSectionMyOrders = myOrders?.SellOrderView;
 						}
-						getMatchingOrder = orderSectionMyOrders ? .Entry ? .FirstOrDefault(MatchingOrder);
+						getMatchingOrder = orderSectionMyOrders?.Entry?.FirstOrDefault(MatchingOrder);
 						if (getMatchingOrder != null) {
 							foundOrder = true;
 							break;
 						}
 						Host.Delay(1000);
-						Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-						myOrders = Measurement ? .WindowRegionalMarket ? .FirstOrDefault() ? .MyOrders;
-						orderSectionMyOrders = myOrders ? .BuyOrderView;
+						Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+						myOrders = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.MyOrders;
+						orderSectionMyOrders = myOrders?.BuyOrderView;
 						if (orderEntry.Type.Equals("Sell Order")) {
-							orderSectionMyOrders = myOrders ? .SellOrderView;
+							orderSectionMyOrders = myOrders?.SellOrderView;
 						}
-						getMatchingOrder = orderSectionMyOrders ? .Entry ? .FirstOrDefault(MatchingOrder);
+						getMatchingOrder = orderSectionMyOrders?.Entry?.FirstOrDefault(MatchingOrder);
 						if (getMatchingOrder != null) {
 							foundOrder = true;
 							break;
 						}
 						Host.Delay(1000);
-						Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-						myOrders = Measurement ? .WindowRegionalMarket ? .FirstOrDefault() ? .MyOrders;
-						orderSectionMyOrders = myOrders ? .BuyOrderView;
+						Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+						myOrders = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.MyOrders;
+						orderSectionMyOrders = myOrders?.BuyOrderView;
 						if (orderEntry.Type.Equals("Sell Order")) {
-							orderSectionMyOrders = myOrders ? .SellOrderView;
+							orderSectionMyOrders = myOrders?.SellOrderView;
 						}
-						getMatchingOrder = orderSectionMyOrders ? .Entry ? .FirstOrDefault(MatchingOrder);
+						getMatchingOrder = orderSectionMyOrders?.Entry?.FirstOrDefault(MatchingOrder);
 						if (getMatchingOrder != null) {
 							foundOrder = true;
 							break;
@@ -362,36 +363,36 @@ if (orderEntries.Count > 0) {
 						Console.Beep(500, 1000);
 					} else {
 
-						if(!ClickMenuEntryOnMenuRootJason(getMatchingOrder, "View Market")) {
-                            Host.Log("Failed View Market Details");
-                            goto Something_has_gone_wrong;
-                        }
+						if (!ClickMenuEntryOnMenuRootJason(getMatchingOrder, "View Market")) {
+							Host.Log("Failed View Market Details");
+							goto Something_has_gone_wrong;
+						}
 						Host.Delay(2000);
 
-						while (Measurement ? .WindowRegionalMarket ? [0] ? .SelectedItemTypeDetails ? .MarketData ? .BuyerView == null && Measurement ? .WindowRegionalMarket ? [0] ? .SelectedItemTypeDetails ? .MarketData ? .SellerView == null) {
+						while (Measurement?.WindowRegionalMarket ? [0]?.SelectedItemTypeDetails?.MarketData?.BuyerView == null && Measurement?.WindowRegionalMarket ? [0]?.SelectedItemTypeDetails?.MarketData?.SellerView == null) {
 
-							Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
+							Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
 							Host.Delay(200);
 						}
 
-						var orderSectionMarketData = Measurement ? .WindowRegionalMarket ? .FirstOrDefault() ? .SelectedItemTypeDetails ? .MarketData ? .BuyerView;
+						var orderSectionMarketData = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.SelectedItemTypeDetails?.MarketData?.BuyerView;
 						if (orderEntry.Type.Equals("Sell Order")) {
-							orderSectionMarketData = Measurement ? .WindowRegionalMarket ? .FirstOrDefault() ? .SelectedItemTypeDetails ? .MarketData ? .SellerView;
+							orderSectionMarketData = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.SelectedItemTypeDetails?.MarketData?.SellerView;
 						}
 						while (orderSectionMarketData == null) {
 							Host.Delay(500);
-							Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-							orderSectionMarketData = Measurement ? .WindowRegionalMarket ? .FirstOrDefault() ? .SelectedItemTypeDetails ? .MarketData ? .BuyerView;
+							Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+							orderSectionMarketData = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.SelectedItemTypeDetails?.MarketData?.BuyerView;
 							if (orderEntry.Type.Equals("Sell Order")) {
-								orderSectionMarketData = Measurement ? .WindowRegionalMarket ? .FirstOrDefault() ? .SelectedItemTypeDetails ? .MarketData ? .SellerView;
+								orderSectionMarketData = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.SelectedItemTypeDetails?.MarketData?.SellerView;
 							}
 						}
-						while (orderSectionMarketData ? .Entry ? .FirstOrDefault() == null) {
+						while (orderSectionMarketData?.Entry?.FirstOrDefault() == null) {
 							Host.Delay(500);
-							Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-							orderSectionMarketData = Measurement ? .WindowRegionalMarket ? .FirstOrDefault() ? .SelectedItemTypeDetails ? .MarketData ? .BuyerView;
+							Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+							orderSectionMarketData = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.SelectedItemTypeDetails?.MarketData?.BuyerView;
 							if (orderEntry.Type.Equals("Sell Order")) {
-								orderSectionMarketData = Measurement ? .WindowRegionalMarket ? .FirstOrDefault() ? .SelectedItemTypeDetails ? .MarketData ? .SellerView;
+								orderSectionMarketData = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.SelectedItemTypeDetails?.MarketData?.SellerView;
 							}
 						}
 
@@ -399,13 +400,13 @@ if (orderEntries.Count > 0) {
 						if (orderEntry.Type.Equals("Sell Order")) {
 
 							//Seems like a bug means that BackgroundColor is not populated on Seller unless the entry is clicked first
-							Sanderling.MouseClickLeft(orderSectionMarketData ? .Entry ? .FirstOrDefault());
+							Sanderling.MouseClickLeft(orderSectionMarketData?.Entry?.FirstOrDefault());
 							Host.Delay(5000);
 
-							var FirstBlue = orderSectionMarketData ? .Entry ? .FirstOrDefault(ContainsBlueBackground);
-							var FirstBlack = orderSectionMarketData ? .Entry ? .FirstOrDefault(ContainsBlackBackground);
-							Host.Log("FirstBlue: " + string.Join(", ", FirstBlue ? .ListColumnCellLabel ? .Select(ColumnCellLabel = >ColumnCellLabel.Key ? .Text + " : " + ColumnCellLabel.Value) ? .ToArray() ? ?new string[0]));
-							Host.Log("FirstBlack: " + string.Join(", ", FirstBlack ? .ListColumnCellLabel ? .Select(ColumnCellLabel = >ColumnCellLabel.Key ? .Text + " : " + ColumnCellLabel.Value) ? .ToArray() ? ?new string[0]));
+							var FirstBlue = orderSectionMarketData?.Entry?.FirstOrDefault(ContainsBlueBackground);
+							var FirstBlack = orderSectionMarketData?.Entry?.FirstOrDefault(ContainsBlackBackground);
+							Host.Log("FirstBlue: " + string.Join(", ", FirstBlue?.ListColumnCellLabel?.Select(ColumnCellLabel=>ColumnCellLabel.Key?.Text + " : " + ColumnCellLabel.Value)?.ToArray() ?? new string[0]));
+							Host.Log("FirstBlack: " + string.Join(", ", FirstBlack?.ListColumnCellLabel?.Select(ColumnCellLabel=>ColumnCellLabel.Key?.Text + " : " + ColumnCellLabel.Value)?.ToArray() ?? new string[0]));
 
 							bool foundBlue = false;
 							if (FirstBlue != null) {
@@ -413,57 +414,57 @@ if (orderEntries.Count > 0) {
 							} else {
 								//Check multiple times to be sure
 								Host.Delay(1000);
-								Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-								FirstBlue = orderSectionMarketData ? .Entry ? .FirstOrDefault(ContainsBlueBackground);
+								Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+								FirstBlue = orderSectionMarketData?.Entry?.FirstOrDefault(ContainsBlueBackground);
 								if (FirstBlue != null) {
 									foundBlue = true;
 									break;
 								}
 								Host.Delay(1000);
-								Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-								FirstBlue = orderSectionMarketData ? .Entry ? .FirstOrDefault(ContainsBlueBackground);
+								Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+								FirstBlue = orderSectionMarketData?.Entry?.FirstOrDefault(ContainsBlueBackground);
 								if (FirstBlue != null) {
 									foundBlue = true;
 									break;
 								}
 								Host.Delay(1000);
-								Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-								FirstBlue = orderSectionMarketData ? .Entry ? .FirstOrDefault(ContainsBlueBackground);
+								Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+								FirstBlue = orderSectionMarketData?.Entry?.FirstOrDefault(ContainsBlueBackground);
 								if (FirstBlue != null) {
 									foundBlue = true;
 									break;
 								}
 								Host.Delay(1000);
-								Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-								FirstBlue = orderSectionMarketData ? .Entry ? .FirstOrDefault(ContainsBlueBackground);
+								Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+								FirstBlue = orderSectionMarketData?.Entry?.FirstOrDefault(ContainsBlueBackground);
 								if (FirstBlue != null) {
 									foundBlue = true;
 									break;
 								}
 								Host.Delay(1000);
-								Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-								FirstBlue = orderSectionMarketData ? .Entry ? .FirstOrDefault(ContainsBlueBackground);
+								Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+								FirstBlue = orderSectionMarketData?.Entry?.FirstOrDefault(ContainsBlueBackground);
 								if (FirstBlue != null) {
 									foundBlue = true;
 									break;
 								}
 								Host.Delay(1000);
-								Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-								FirstBlue = orderSectionMarketData ? .Entry ? .FirstOrDefault(ContainsBlueBackground);
+								Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+								FirstBlue = orderSectionMarketData?.Entry?.FirstOrDefault(ContainsBlueBackground);
 								if (FirstBlue != null) {
 									foundBlue = true;
 									break;
 								}
 								Host.Delay(1000);
-								Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-								FirstBlue = orderSectionMarketData ? .Entry ? .FirstOrDefault(ContainsBlueBackground);
+								Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+								FirstBlue = orderSectionMarketData?.Entry?.FirstOrDefault(ContainsBlueBackground);
 								if (FirstBlue != null) {
 									foundBlue = true;
 									break;
 								}
 								Host.Delay(1000);
-								Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-								FirstBlue = orderSectionMarketData ? .Entry ? .FirstOrDefault(ContainsBlueBackground);
+								Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+								FirstBlue = orderSectionMarketData?.Entry?.FirstOrDefault(ContainsBlueBackground);
 								if (FirstBlue != null) {
 									foundBlue = true;
 									break;
@@ -485,57 +486,57 @@ if (orderEntries.Count > 0) {
 							} else {
 								//Check multiple times to be sure
 								Host.Delay(1000);
-								Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-								FirstBlack = orderSectionMarketData ? .Entry ? .FirstOrDefault(ContainsBlackBackground);
+								Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+								FirstBlack = orderSectionMarketData?.Entry?.FirstOrDefault(ContainsBlackBackground);
 								if (FirstBlack != null) {
 									foundBlack = true;
 									break;
 								}
 								Host.Delay(1000);
-								Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-								FirstBlack = orderSectionMarketData ? .Entry ? .FirstOrDefault(ContainsBlackBackground);
+								Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+								FirstBlack = orderSectionMarketData?.Entry?.FirstOrDefault(ContainsBlackBackground);
 								if (FirstBlack != null) {
 									foundBlack = true;
 									break;
 								}
 								Host.Delay(1000);
-								Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-								FirstBlack = orderSectionMarketData ? .Entry ? .FirstOrDefault(ContainsBlackBackground);
+								Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+								FirstBlack = orderSectionMarketData?.Entry?.FirstOrDefault(ContainsBlackBackground);
 								if (FirstBlack != null) {
 									foundBlack = true;
 									break;
 								}
 								Host.Delay(1000);
-								Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-								FirstBlack = orderSectionMarketData ? .Entry ? .FirstOrDefault(ContainsBlackBackground);
+								Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+								FirstBlack = orderSectionMarketData?.Entry?.FirstOrDefault(ContainsBlackBackground);
 								if (FirstBlack != null) {
 									foundBlack = true;
 									break;
 								}
 								Host.Delay(1000);
-								Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-								FirstBlack = orderSectionMarketData ? .Entry ? .FirstOrDefault(ContainsBlackBackground);
+								Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+								FirstBlack = orderSectionMarketData?.Entry?.FirstOrDefault(ContainsBlackBackground);
 								if (FirstBlack != null) {
 									foundBlack = true;
 									break;
 								}
 								Host.Delay(1000);
-								Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-								FirstBlack = orderSectionMarketData ? .Entry ? .FirstOrDefault(ContainsBlackBackground);
+								Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+								FirstBlack = orderSectionMarketData?.Entry?.FirstOrDefault(ContainsBlackBackground);
 								if (FirstBlack != null) {
 									foundBlack = true;
 									break;
 								}
 								Host.Delay(1000);
-								Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-								FirstBlack = orderSectionMarketData ? .Entry ? .FirstOrDefault(ContainsBlackBackground);
+								Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+								FirstBlack = orderSectionMarketData?.Entry?.FirstOrDefault(ContainsBlackBackground);
 								if (FirstBlack != null) {
 									foundBlack = true;
 									break;
 								}
 								Host.Delay(1000);
-								Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-								FirstBlack = orderSectionMarketData ? .Entry ? .FirstOrDefault(ContainsBlackBackground);
+								Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+								FirstBlack = orderSectionMarketData?.Entry?.FirstOrDefault(ContainsBlackBackground);
 								if (FirstBlack != null) {
 									foundBlack = true;
 									break;
@@ -547,12 +548,12 @@ if (orderEntries.Count > 0) {
 							}
 
 							if (foundBlack == true && foundBlue == true) {
-								var bluePriceArray = FirstBlue ? .ListColumnCellLabel ? .ToArray();
+								var bluePriceArray = FirstBlue?.ListColumnCellLabel?.ToArray();
 								string bluePriceStr = bluePriceArray[2].Value.Substring(0, bluePriceArray[2].Value.Length - 4);
 								bluePriceStr = bluePriceStr.Replace(@",", "");
 								double bluePriceDbl = Convert.ToDouble(bluePriceStr);
 
-								var BlackPriceArray = FirstBlack ? .ListColumnCellLabel ? .ToArray();
+								var BlackPriceArray = FirstBlack?.ListColumnCellLabel?.ToArray();
 								string BlackPriceStr = BlackPriceArray[2].Value.Substring(0, BlackPriceArray[2].Value.Length - 4);
 								BlackPriceStr = BlackPriceStr.Replace(@",", "");
 								double BlackPriceDbl = Convert.ToDouble(BlackPriceStr);
@@ -567,28 +568,28 @@ if (orderEntries.Count > 0) {
 								}
 
 								if (newBluePrice > 0) {
-									if(!ClickMenuEntryOnMenuRootJason(FirstBlue, "Modify Order")) {
-                                        Host.Log("Failed to Modify Order Sell");
-                                        goto Something_has_gone_wrong;
-                                    }
+									if (!ClickMenuEntryOnMenuRootJason(FirstBlue, "Modify Order")) {
+										Host.Log("Failed to Modify Order Sell");
+										goto Something_has_gone_wrong;
+									}
 									Host.Delay(2000);
 									EnterPrice(newBluePrice);
 									//Verify entered value
 									Sanderling.InvalidateMeasurement();
 									Host.Delay(2000);
-									Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-									string enteredNewValueStr = Measurement ? .WindowMarketAction ? .FirstOrDefault() ? .InputText ? .FirstOrDefault() ? .Text ? .ToString();
+									Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+									string enteredNewValueStr = Measurement?.WindowMarketAction?.FirstOrDefault()?.InputText?.FirstOrDefault()?.Text?.ToString();
 									enteredNewValueStr = enteredNewValueStr.Replace(@",", "");
 									double enteredNewValueDbl = Convert.ToDouble(enteredNewValueStr);
 
-									var actionArray = Measurement ? .WindowMarketAction ? .FirstOrDefault() ? .LabelText ? .ToArray();
-									string priceChangeStr = actionArray ? [12] ? .Text.ToString();
+									var actionArray = Measurement?.WindowMarketAction?.FirstOrDefault()?.LabelText?.ToArray();
+									string priceChangeStr = actionArray ? [12]?.Text.ToString();
 									priceChangeStr = priceChangeStr.Substring(0, priceChangeStr.Length - 4);
 									priceChangeStr = priceChangeStr.Replace(@",", "");
 									double priceChangeDbl = Convert.ToDouble(priceChangeStr);
 									priceChangeDbl = Math.Round(priceChangeDbl, 2);
 
-									string brokerFeeStr = actionArray ? [14] ? .Text.ToString();
+									string brokerFeeStr = actionArray ? [14]?.Text.ToString();
 									brokerFeeStr = brokerFeeStr.Substring(0, brokerFeeStr.Length - 4);
 									brokerFeeStr = brokerFeeStr.Replace(@",", "");
 									double brokerFeeDbl = Convert.ToDouble(brokerFeeStr);
@@ -598,10 +599,10 @@ if (orderEntries.Count > 0) {
 
 									if (Math.Abs(newBluePrice - enteredNewValueDbl) < 0.011) {
 										//price is as expected so click ok
-										var ButtonOK = Measurement ? .WindowMarketAction ? .FirstOrDefault() ? .ButtonText ? .FirstOrDefault(button = >(button ? .Text).RegexMatchSuccessIgnoreCase("ok"));
+										var ButtonOK = Measurement?.WindowMarketAction?.FirstOrDefault()?.ButtonText?.FirstOrDefault(button=>(button?.Text).RegexMatchSuccessIgnoreCase("ok"));
 										Sanderling.MouseClickLeft(ButtonOK);
 										Host.Delay(5000);
-										Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
+										Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
 										CloseModalUIElementYes();
 										CloseModalUIElementYes();
 										CloseModalUIElementYes();
@@ -614,10 +615,10 @@ if (orderEntries.Count > 0) {
 								}
 							}
 						} else {
-							var FirstBlue = orderSectionMarketData ? .Entry ? .FirstOrDefault(ContainsBlueBackground);
-							var FirstGreen = orderSectionMarketData ? .Entry ? .FirstOrDefault(ContainsGreenBackground);
-							Host.Log("FirstBlue: " + string.Join(", ", FirstBlue ? .ListColumnCellLabel ? .Select(ColumnCellLabel = >ColumnCellLabel.Key ? .Text + " : " + ColumnCellLabel.Value) ? .ToArray() ? ?new string[0]));
-							Host.Log("FirstGreen: " + string.Join(", ", FirstGreen ? .ListColumnCellLabel ? .Select(ColumnCellLabel = >ColumnCellLabel.Key ? .Text + " : " + ColumnCellLabel.Value) ? .ToArray() ? ?new string[0]));
+							var FirstBlue = orderSectionMarketData?.Entry?.FirstOrDefault(ContainsBlueBackground);
+							var FirstGreen = orderSectionMarketData?.Entry?.FirstOrDefault(ContainsGreenBackground);
+							Host.Log("FirstBlue: " + string.Join(", ", FirstBlue?.ListColumnCellLabel?.Select(ColumnCellLabel=>ColumnCellLabel.Key?.Text + " : " + ColumnCellLabel.Value)?.ToArray() ?? new string[0]));
+							Host.Log("FirstGreen: " + string.Join(", ", FirstGreen?.ListColumnCellLabel?.Select(ColumnCellLabel=>ColumnCellLabel.Key?.Text + " : " + ColumnCellLabel.Value)?.ToArray() ?? new string[0]));
 
 							bool foundBlue = false;
 							if (FirstBlue != null) {
@@ -625,57 +626,57 @@ if (orderEntries.Count > 0) {
 							} else {
 								//Check multiple times to be sure
 								Host.Delay(1000);
-								Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-								FirstBlue = orderSectionMarketData ? .Entry ? .FirstOrDefault(ContainsBlueBackground);
+								Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+								FirstBlue = orderSectionMarketData?.Entry?.FirstOrDefault(ContainsBlueBackground);
 								if (FirstBlue != null) {
 									foundBlue = true;
 									break;
 								}
 								Host.Delay(1000);
-								Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-								FirstBlue = orderSectionMarketData ? .Entry ? .FirstOrDefault(ContainsBlueBackground);
+								Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+								FirstBlue = orderSectionMarketData?.Entry?.FirstOrDefault(ContainsBlueBackground);
 								if (FirstBlue != null) {
 									foundBlue = true;
 									break;
 								}
 								Host.Delay(1000);
-								Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-								FirstBlue = orderSectionMarketData ? .Entry ? .FirstOrDefault(ContainsBlueBackground);
+								Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+								FirstBlue = orderSectionMarketData?.Entry?.FirstOrDefault(ContainsBlueBackground);
 								if (FirstBlue != null) {
 									foundBlue = true;
 									break;
 								}
 								Host.Delay(1000);
-								Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-								FirstBlue = orderSectionMarketData ? .Entry ? .FirstOrDefault(ContainsBlueBackground);
+								Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+								FirstBlue = orderSectionMarketData?.Entry?.FirstOrDefault(ContainsBlueBackground);
 								if (FirstBlue != null) {
 									foundBlue = true;
 									break;
 								}
 								Host.Delay(1000);
-								Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-								FirstBlue = orderSectionMarketData ? .Entry ? .FirstOrDefault(ContainsBlueBackground);
+								Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+								FirstBlue = orderSectionMarketData?.Entry?.FirstOrDefault(ContainsBlueBackground);
 								if (FirstBlue != null) {
 									foundBlue = true;
 									break;
 								}
 								Host.Delay(1000);
-								Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-								FirstBlue = orderSectionMarketData ? .Entry ? .FirstOrDefault(ContainsBlueBackground);
+								Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+								FirstBlue = orderSectionMarketData?.Entry?.FirstOrDefault(ContainsBlueBackground);
 								if (FirstBlue != null) {
 									foundBlue = true;
 									break;
 								}
 								Host.Delay(1000);
-								Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-								FirstBlue = orderSectionMarketData ? .Entry ? .FirstOrDefault(ContainsBlueBackground);
+								Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+								FirstBlue = orderSectionMarketData?.Entry?.FirstOrDefault(ContainsBlueBackground);
 								if (FirstBlue != null) {
 									foundBlue = true;
 									break;
 								}
 								Host.Delay(1000);
-								Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-								FirstBlue = orderSectionMarketData ? .Entry ? .FirstOrDefault(ContainsBlueBackground);
+								Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+								FirstBlue = orderSectionMarketData?.Entry?.FirstOrDefault(ContainsBlueBackground);
 								if (FirstBlue != null) {
 									foundBlue = true;
 									break;
@@ -697,57 +698,57 @@ if (orderEntries.Count > 0) {
 							} else {
 								//Check multiple times to be sure
 								Host.Delay(1000);
-								Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-								FirstGreen = orderSectionMarketData ? .Entry ? .FirstOrDefault(ContainsGreenBackground);
+								Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+								FirstGreen = orderSectionMarketData?.Entry?.FirstOrDefault(ContainsGreenBackground);
 								if (FirstGreen != null) {
 									foundGreen = true;
 									break;
 								}
 								Host.Delay(1000);
-								Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-								FirstGreen = orderSectionMarketData ? .Entry ? .FirstOrDefault(ContainsGreenBackground);
+								Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+								FirstGreen = orderSectionMarketData?.Entry?.FirstOrDefault(ContainsGreenBackground);
 								if (FirstGreen != null) {
 									foundGreen = true;
 									break;
 								}
 								Host.Delay(1000);
-								Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-								FirstGreen = orderSectionMarketData ? .Entry ? .FirstOrDefault(ContainsGreenBackground);
+								Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+								FirstGreen = orderSectionMarketData?.Entry?.FirstOrDefault(ContainsGreenBackground);
 								if (FirstGreen != null) {
 									foundGreen = true;
 									break;
 								}
 								Host.Delay(1000);
-								Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-								FirstGreen = orderSectionMarketData ? .Entry ? .FirstOrDefault(ContainsGreenBackground);
+								Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+								FirstGreen = orderSectionMarketData?.Entry?.FirstOrDefault(ContainsGreenBackground);
 								if (FirstGreen != null) {
 									foundGreen = true;
 									break;
 								}
 								Host.Delay(1000);
-								Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-								FirstGreen = orderSectionMarketData ? .Entry ? .FirstOrDefault(ContainsGreenBackground);
+								Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+								FirstGreen = orderSectionMarketData?.Entry?.FirstOrDefault(ContainsGreenBackground);
 								if (FirstGreen != null) {
 									foundGreen = true;
 									break;
 								}
 								Host.Delay(1000);
-								Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-								FirstGreen = orderSectionMarketData ? .Entry ? .FirstOrDefault(ContainsGreenBackground);
+								Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+								FirstGreen = orderSectionMarketData?.Entry?.FirstOrDefault(ContainsGreenBackground);
 								if (FirstGreen != null) {
 									foundGreen = true;
 									break;
 								}
 								Host.Delay(1000);
-								Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-								FirstGreen = orderSectionMarketData ? .Entry ? .FirstOrDefault(ContainsGreenBackground);
+								Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+								FirstGreen = orderSectionMarketData?.Entry?.FirstOrDefault(ContainsGreenBackground);
 								if (FirstGreen != null) {
 									foundGreen = true;
 									break;
 								}
 								Host.Delay(1000);
-								Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-								FirstGreen = orderSectionMarketData ? .Entry ? .FirstOrDefault(ContainsGreenBackground);
+								Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+								FirstGreen = orderSectionMarketData?.Entry?.FirstOrDefault(ContainsGreenBackground);
 								if (FirstGreen != null) {
 									foundGreen = true;
 									break;
@@ -759,12 +760,12 @@ if (orderEntries.Count > 0) {
 							}
 
 							if (foundGreen == true && foundBlue == true) {
-								var bluePriceArray = FirstBlue ? .ListColumnCellLabel ? .ToArray();
+								var bluePriceArray = FirstBlue?.ListColumnCellLabel?.ToArray();
 								string bluePriceStr = bluePriceArray[2].Value.Substring(0, bluePriceArray[2].Value.Length - 4);
 								bluePriceStr = bluePriceStr.Replace(@",", "");
 								double bluePriceDbl = Convert.ToDouble(bluePriceStr);
 
-								var greenPriceArray = FirstGreen ? .ListColumnCellLabel ? .ToArray();
+								var greenPriceArray = FirstGreen?.ListColumnCellLabel?.ToArray();
 								string greenPriceStr = greenPriceArray[2].Value.Substring(0, greenPriceArray[2].Value.Length - 4);
 								greenPriceStr = greenPriceStr.Replace(@",", "");
 								double greenPriceDbl = Convert.ToDouble(greenPriceStr);
@@ -775,9 +776,9 @@ if (orderEntries.Count > 0) {
 									if (newBluePrice > orderEntry.HighestPrice) {
 										//Price gone too high see if we can get next best slot
 										newBluePrice = 0;
-										var entryArray = orderSectionMarketData ? .Entry ? .ToArray();
+										var entryArray = orderSectionMarketData?.Entry?.ToArray();
 										foreach(var entry in entryArray) {
-											var entryPriceArray = entry ? .ListColumnCellLabel ? .ToArray();
+											var entryPriceArray = entry?.ListColumnCellLabel?.ToArray();
 											string entryPrice = entryPriceArray[2].Value.Substring(0, entryPriceArray[2].Value.Length - 4);
 											entryPrice = entryPrice.Replace(@",", "");
 											double entryPriceDbl = Convert.ToDouble(entryPrice);
@@ -790,28 +791,28 @@ if (orderEntries.Count > 0) {
 								}
 
 								if (newBluePrice > 0) {
-									if(!ClickMenuEntryOnMenuRootJason(FirstBlue, "Modify Order")) {
-                                        Host.Log("Failed to Modify Order Buy");
-                                        goto Something_has_gone_wrong;
-                                    }
+									if (!ClickMenuEntryOnMenuRootJason(FirstBlue, "Modify Order")) {
+										Host.Log("Failed to Modify Order Buy");
+										goto Something_has_gone_wrong;
+									}
 									Host.Delay(2000);
 									EnterPrice(newBluePrice);
 									//Verify entered value
 									Sanderling.InvalidateMeasurement();
 									Host.Delay(2000);
-									Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
-									string enteredNewValueStr = Measurement ? .WindowMarketAction ? .FirstOrDefault() ? .InputText ? .FirstOrDefault() ? .Text ? .ToString();
+									Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+									string enteredNewValueStr = Measurement?.WindowMarketAction?.FirstOrDefault()?.InputText?.FirstOrDefault()?.Text?.ToString();
 									enteredNewValueStr = enteredNewValueStr.Replace(@",", "");
 									double enteredNewValueDbl = Convert.ToDouble(enteredNewValueStr);
 
-									var actionArray = Measurement ? .WindowMarketAction ? .FirstOrDefault() ? .LabelText ? .ToArray();
-									string priceChangeStr = actionArray ? [12] ? .Text.ToString();
+									var actionArray = Measurement?.WindowMarketAction?.FirstOrDefault()?.LabelText?.ToArray();
+									string priceChangeStr = actionArray ? [12]?.Text.ToString();
 									priceChangeStr = priceChangeStr.Substring(0, priceChangeStr.Length - 4);
 									priceChangeStr = priceChangeStr.Replace(@",", "");
 									double priceChangeDbl = Convert.ToDouble(priceChangeStr);
 									priceChangeDbl = Math.Round(priceChangeDbl, 2);
 
-									string brokerFeeStr = actionArray ? [14] ? .Text.ToString();
+									string brokerFeeStr = actionArray ? [14]?.Text.ToString();
 									brokerFeeStr = brokerFeeStr.Substring(0, brokerFeeStr.Length - 4);
 									brokerFeeStr = brokerFeeStr.Replace(@",", "");
 									double brokerFeeDbl = Convert.ToDouble(brokerFeeStr);
@@ -821,10 +822,10 @@ if (orderEntries.Count > 0) {
 
 									if (Math.Abs(newBluePrice - enteredNewValueDbl) < 0.011) {
 										//price is as expected so click ok
-										var ButtonOK = Measurement ? .WindowMarketAction ? .FirstOrDefault() ? .ButtonText ? .FirstOrDefault(button = >(button ? .Text).RegexMatchSuccessIgnoreCase("ok"));
+										var ButtonOK = Measurement?.WindowMarketAction?.FirstOrDefault()?.ButtonText?.FirstOrDefault(button=>(button?.Text).RegexMatchSuccessIgnoreCase("ok"));
 										Sanderling.MouseClickLeft(ButtonOK);
 										Host.Delay(5000);
-										Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
+										Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
 										CloseModalUIElementYes();
 										CloseModalUIElementYes();
 										CloseModalUIElementYes();
@@ -833,20 +834,20 @@ if (orderEntries.Count > 0) {
 										orderEntry.PriceChangeTotalCost = orderEntry.PriceChangeTotalCost + priceChangeDbl + brokerFeeDbl;
 									}
 								} else {
-									Host.Log("No change needed for " + orderName + " - " + orderEntry.Type);
+									Host.Log("No change needed for " + orderName);
 								}
 							}
 						}
 					}
 					//Click My Orders
-					Sanderling.MouseClickLeft(Measurement ? .WindowRegionalMarket ? .FirstOrDefault() ? .RightTabGroup ? .ListTab[2] ? .RegionInteraction);
+					Sanderling.MouseClickLeft(Measurement?.WindowRegionalMarket?.FirstOrDefault()?.RightTabGroup?.ListTab[2]?.RegionInteraction);
 
 					//backup input file & save contents of object
 					Host.Log("Writing log.");
 					System.IO.File.Copy(inputFileName, inputFileName + ".bak", true);
 					using(FileStream fileStream = new FileStream(inputFileName, FileMode.Create, FileAccess.ReadWrite)) {
 						using(var writer = new StreamWriter(fileStream)) {
-							List < OrderEntry > SortedList = orderEntries.OrderBy(o = >o.OrderComplete).ToList();
+							List<OrderEntry> SortedList = orderEntries.OrderBy(o=>o.OrderComplete).ToList();
 							foreach(OrderEntry orderEntryToWrite in SortedList) {
 								string output = orderEntryToWrite.Name.ToString() + "," + orderEntryToWrite.Type.ToString() + "," + orderEntryToWrite.StartPrice.ToString() + "," + orderEntryToWrite.LowestPrice.ToString() + "," + orderEntryToWrite.HighestPrice.ToString() + "," + orderEntryToWrite.Margin.ToString() + "," + orderEntryToWrite.NumOfPriceChanges.ToString() + "," + orderEntryToWrite.PriceChangeTotalCost.ToString() + "," + orderEntryToWrite.UpdateTime.ToString() + "," + orderEntryToWrite.OrderComplete.ToString();
 								writer.WriteLine(output);
