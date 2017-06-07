@@ -218,7 +218,7 @@ if (orderEntries.Count > 0) {
                 DateTime b = DateTime.Now;
                 if (Math.Round(b.Subtract(a).TotalSeconds, 0) > 320) {
                     timeToCheck = true;
-                    Host.Log("Time to check: " + orderEntry.Name);
+                    Host.Log("Time to check: " + orderEntry.Name + " - " + orderEntry.Type);
                 }
 
                 if (timeToCheck) {
@@ -612,7 +612,7 @@ if (orderEntries.Count > 0) {
                                         orderEntry.PriceChangeTotalCost = orderEntry.PriceChangeTotalCost + priceChangeDbl + brokerFeeDbl;
                                     }
                                 } else {
-                                    Host.Log("No change needed for " + orderName);
+                                    Host.Log("No change needed for " + orderName + " - " + orderEntry.Type);
                                 }
                             }
                         } else {
@@ -835,7 +835,7 @@ if (orderEntries.Count > 0) {
                                         orderEntry.PriceChangeTotalCost = orderEntry.PriceChangeTotalCost + priceChangeDbl + brokerFeeDbl;
                                     }
                                 } else {
-                                    Host.Log("No change needed for " + orderName);
+                                    Host.Log("No change needed for " + orderName + " - " + orderEntry.Type);
                                 }
                             }
                         }
