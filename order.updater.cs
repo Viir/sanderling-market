@@ -136,6 +136,7 @@ bool ClickMenuEntryOnMenuRootJason(IUIElement MenuRoot, string MenuEntryRegexPat
         MenuEntry = Menu?.EntryFirstMatchingRegexPattern(MenuEntryRegexPattern, RegexOptions.IgnoreCase);
         if (retryCount++>10) {
             success = false;
+            break;
         }
     }
 
