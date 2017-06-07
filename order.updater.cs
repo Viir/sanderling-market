@@ -113,8 +113,9 @@ double CalcMaxPrice(double startPrice, double highestPrice, double margin) {
 	return answer;
 }
 
-void ClickMenuEntryOnMenuRootJason(IUIElement MenuRoot, string MenuEntryRegexPattern) {
-	if (MenuRoot == null) {
+bool ClickMenuEntryOnMenuRootJason(IUIElement MenuRoot, string MenuEntryRegexPattern) {
+	int retryCount = 0;
+    if (MenuRoot == null) {
 		Host.Log("Fatal: Right click menu item is null");
 	}
 
@@ -130,9 +131,13 @@ void ClickMenuEntryOnMenuRootJason(IUIElement MenuRoot, string MenuEntryRegexPat
 		Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
 		Menu = Measurement ? .Menu ? .FirstOrDefault();
 		MenuEntry = Menu ? .EntryFirstMatchingRegexPattern(MenuEntryRegexPattern, RegexOptions.IgnoreCase);
+        if(retryCount++ > 10) {
+            return false;
+        }
 	}
 
 	Sanderling.MouseClickLeft(MenuEntry);
+    return true;
 }
 
 void ClickMenuEntryOnMenuRoot(IUIElement MenuRoot, string MenuEntryRegexPattern) {
@@ -198,7 +203,9 @@ loopTryAgain:
 
 if (orderEntries.Count > 0) {
 	for (;;) {
-
+        
+        Something_has_gone_wrong:
+        
 		foreach(OrderEntry orderEntry in orderEntries) {
 
 			if (orderEntry.OrderComplete == false) {
@@ -209,7 +216,7 @@ if (orderEntries.Count > 0) {
 				DateTime b = DateTime.Now;
 				if (Math.Round(b.Subtract(a).TotalSeconds, 0) > 320) {
 					timeToCheck = true;
-					Host.Log("Time to check: " + orderEntry.Name);
+					Host.Log("Time to check: " + orderEntry.Name + " - " + orderEntry.Type);
 				}
 
 				if (timeToCheck) {
@@ -355,7 +362,10 @@ if (orderEntries.Count > 0) {
 						Console.Beep(500, 1000);
 					} else {
 
-						ClickMenuEntryOnMenuRootJason(getMatchingOrder, "View Market");
+						if(!ClickMenuEntryOnMenuRootJason(getMatchingOrder, "View Market")) {
+                            Host.Log("Failed View Market Details");
+                            goto Something_has_gone_wrong;
+                        }
 						Host.Delay(2000);
 
 						while (Measurement ? .WindowRegionalMarket ? [0] ? .SelectedItemTypeDetails ? .MarketData ? .BuyerView == null && Measurement ? .WindowRegionalMarket ? [0] ? .SelectedItemTypeDetails ? .MarketData ? .SellerView == null) {
@@ -557,7 +567,10 @@ if (orderEntries.Count > 0) {
 								}
 
 								if (newBluePrice > 0) {
-									ClickMenuEntryOnMenuRootJason(FirstBlue, "Modify Order");
+									if(!ClickMenuEntryOnMenuRootJason(FirstBlue, "Modify Order")) {
+                                        Host.Log("Failed to Modify Order Sell");
+                                        goto Something_has_gone_wrong;
+                                    }
 									Host.Delay(2000);
 									EnterPrice(newBluePrice);
 									//Verify entered value
@@ -777,7 +790,10 @@ if (orderEntries.Count > 0) {
 								}
 
 								if (newBluePrice > 0) {
-									ClickMenuEntryOnMenuRootJason(FirstBlue, "Modify Order");
+									if(!ClickMenuEntryOnMenuRootJason(FirstBlue, "Modify Order")) {
+                                        Host.Log("Failed to Modify Order Buy");
+                                        goto Something_has_gone_wrong;
+                                    }
 									Host.Delay(2000);
 									EnterPrice(newBluePrice);
 									//Verify entered value
@@ -817,7 +833,7 @@ if (orderEntries.Count > 0) {
 										orderEntry.PriceChangeTotalCost = orderEntry.PriceChangeTotalCost + priceChangeDbl + brokerFeeDbl;
 									}
 								} else {
-									Host.Log("No change needed for " + orderName);
+									Host.Log("No change needed for " + orderName + " - " + orderEntry.Type);
 								}
 							}
 						}
