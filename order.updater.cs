@@ -9,7 +9,7 @@ using System.IO;
 
 var Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
 string inputFileName = @"D:\MarketLog.txt";
-//double maxPriceChangePercent = 5;
+//Host.Break(); //Stops execution
 bool ContainsBlueBackground(MemoryStruct.IListEntry Entry) => Entry?.ListBackgroundColor?.Any(BackgroundColor => 111 < BackgroundColor?.OMilli && 777 < BackgroundColor?.BMilli && BackgroundColor?.RMilli < 111 && BackgroundColor?.GMilli < 111) ?? false;
 bool ContainsGreenBackground(MemoryStruct.IListEntry Entry) => Entry?.ListBackgroundColor?.Any(BackgroundColor => 111 < BackgroundColor?.OMilli && 777 < BackgroundColor?.GMilli && BackgroundColor?.RMilli < 111 && BackgroundColor?.BMilli < 111) ?? false;
 bool ContainsBlackBackground(MemoryStruct.IListEntry Entry) => Entry?.ListBackgroundColor?.Any(BackgroundColor => BackgroundColor?.OMilli > 450 && BackgroundColor?.BMilli > 240 && BackgroundColor?.RMilli > 240 && BackgroundColor?.GMilli > 240) ?? true;
