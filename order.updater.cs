@@ -2,11 +2,11 @@ using Parse = Sanderling.Parse;
 using MemoryStruct = Sanderling.Interface.MemoryStruct;
 using System.IO;
 
-//TODO: Need to break out of loops if in them for too long
+//TODO: Need to break out of loops if in them for too long...
 //TODO: 
 //Host.Break(); // Halts execution until user continues
 
-//WARNING WARNING WARNING - Filter must be set to station only.
+//WARNING WARNING WARNING - Filter must be set to station only
 
 var Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
 string inputFileName = @"D:\MarketLog.txt";
