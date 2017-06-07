@@ -371,9 +371,13 @@ if (orderEntries.Count > 0) {
                             goto Something_has_gone_wrong;
                         }
                         Host.Delay(2000);
-
+                        
+                        int retryCount = 0;
                         while (Measurement?.WindowRegionalMarket ? [0]?.SelectedItemTypeDetails?.MarketData?.BuyerView == null && Measurement?.WindowRegionalMarket ? [0]?.SelectedItemTypeDetails?.MarketData?.SellerView == null) {
-
+                            if(retryCount++ > 30) {
+                                Host.Log("Failed View Market Details");
+                                goto Something_has_gone_wrong;
+                            }
                             Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
                             Host.Delay(200);
                         }
