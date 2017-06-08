@@ -14,10 +14,12 @@ bool ContainsBlueBackground(MemoryStruct.IListEntry Entry)=>Entry?.ListBackgroun
 bool ContainsGreenBackground(MemoryStruct.IListEntry Entry)=>Entry?.ListBackgroundColor?.Any(BackgroundColor=>111 < BackgroundColor?.OMilli && 777 < BackgroundColor?.GMilli && BackgroundColor?.RMilli < 111 && BackgroundColor?.BMilli < 111) ?? false;
 bool ContainsBlackBackground(MemoryStruct.IListEntry Entry)=>Entry?.ListBackgroundColor?.Any(BackgroundColor=>BackgroundColor?.OMilli > 450 && BackgroundColor?.BMilli > 240 && BackgroundColor?.RMilli > 240 && BackgroundColor?.GMilli > 240) ?? true;
 bool MatchingOrder(MemoryStruct.IListEntry Entry)=>Entry?.LabelText?.Any(someText=>someText.Text.ToString().RegexMatchSuccess(orderName)) ?? false;
-List<FileOrderEntry> orderEntries = new List<FileOrderEntry>();
-string orderName = "";
+List<FileOrderEntry> fileOrderEntries = new List<FileOrderEntry>();
 Random rnd = new Random();
 IWindow ModalUIElement=>Measurement?.EnumerateReferencedUIElementTransitive()?.OfType<IWindow>()?.Where(window=>window?.isModal ?? false)?.OrderByDescending(window=>window?.InTreeIndex ?? int.MinValue)?.FirstOrDefault();
+
+string orderName = "";
+double defaultMargin = 5.0;
 
 using(FileStream fileStream = new FileStream(inputFileName, FileMode.OpenOrCreate, FileAccess.ReadWrite)) {
   using(var reader = new StreamReader(fileStream)) {
@@ -29,8 +31,8 @@ using(FileStream fileStream = new FileStream(inputFileName, FileMode.OpenOrCreat
           double minPrice = CalcMinPrice(Convert.ToDouble(values[2]), Convert.ToDouble(values[3]), Convert.ToDouble(values[5]));
           double maxPrice = CalcMaxPrice(Convert.ToDouble(values[2]), Convert.ToDouble(values[4]), Convert.ToDouble(values[5]));
 
-          FileOrderEntry newFileOrder = new FileOrderEntry(values[0].ToString(), values[1].ToString(), Convert.ToDouble(values[2]), minPrice, maxPrice, Convert.ToDouble(values[5]), Convert.ToInt32(values[6]), Convert.ToDouble(values[7]), Convert.ToDateTime(values[8]), Convert.ToBoolean(values[9]));
-          orderEntries.Add(newFileOrder);
+          FileOrderEntry newFileOrder = new FileOrderEntry(values[0].ToString(), values[1].ToString(), Convert.ToDouble(values[2]), minPrice, maxPrice, Convert.ToDouble(values[5]), Convert.ToInt32(values[6]), Convert.ToDouble(values[7]), Convert.ToDateTime(values[8]));
+          fileOrderEntries.Add(newFileOrder);
         }
       }
       catch {
@@ -174,63 +176,48 @@ for (;;) {
   //What margin to use?
   var myOrders = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.MyOrders;
   if(myOrders?.BuyOrderView != null && myOrders?.SellOrderView != null) {
-    //If the market is open
-    MemoryStruct.IListEntry[] buyOrdersInGame = myOrders?.BuyOrderView?.Entry?.ToArray();
-    MemoryStruct.IListEntry[] sellOrdersInGame = myOrders?.SellOrderView?.Entry?.ToArray();
-    int buyOrderCountInGame = buyOrdersInGame?.Length;
-    int sellOrderCountInGame = sellOrdersInGame?.Length;
-    if(buyOrderCountInGame > 0) {
-      foreach(IListEntry buyOrderInGame in buyOrdersInGame) {
-        MemoryStruct.MarketOrderEntry[] orderEntry = buyOrderInGame.ToArray();
-        string orderText = orderEntry?.LabelText[0].Text.ToString();
-        string[] orderTextSplit = orderText.Split('<t>');
-        string orderName = orderTextSplit[0];
-        bool foundName = false;
-        foreach(FileOrderEntry fileOrderEntry in orderEntries) {
-          if(fileOrderEntry.Name.Equals(orderName) && fileOrderEntry.Type.Equals("Buy Order")) {
-            foundName = true;
-            break;
+    try {
+      //If the market is open
+      MemoryStruct.IListEntry[] buyOrdersInGame = myOrders?.BuyOrderView?.Entry?.ToArray();
+      MemoryStruct.IListEntry[] sellOrdersInGame = myOrders?.SellOrderView?.Entry?.ToArray();
+      int buyOrderCountInGame = buyOrdersInGame.Length;
+      int sellOrderCountInGame = sellOrdersInGame.Length;
+      if(buyOrderCountInGame > 0) {
+        foreach(MemoryStruct.IListEntry buyOrderInGame in buyOrdersInGame) {
+          MemoryStruct.MarketOrderEntry[] orderEntry = buyOrderInGame.ToArray();
+          string orderText = orderEntry?.LabelText[0].Text.ToString();
+          string[] orderTextSplit = Regex.Split(orderText, @"<t>");
+          string gameOrderName = orderTextSplit[0];
+          bool foundName = false;
+          foreach(FileOrderEntry fileOrderEntry in fileOrderEntries) {
+            if(fileOrderEntry.Name.Equals(gameOrderName) && fileOrderEntry.Type.Equals("Buy Order")) {
+              foundName = true;
+              break;
+            }
+          }
+          if(!foundName) {
+            // Add details to FileOrderEntry object
+            double orderPrice = 0.0;
+            double minPrice = CalcMinPrice(orderPrice, 0.0, defaultMargin);
+            double maxPrice = CalcMaxPrice(orderPrice, 0.0, defaultMargin);
+            
+            FileOrderEntry newFileOrder = new FileOrderEntry(gameOrderName, "Buy Order", orderPrice, minPrice, maxPrice, defaultMargin, 0, 0.0, DateTime.Now);
+            fileOrderEntries.Add(newFileOrder);
+    
+            //Print details for checking and pause.
+            Host.Log("Name: " + newFileOrder.Name + "  Price: " + newFileOrder.StartPrice + "  Type: " + newFileOrder.Type + "  Min Price: " + newFileOrder.LowestPrice);
+            Host.Break();
           }
         }
-        if(!foundName) {
-          // Add details to FileOrderEntry object
-          
-          
-          //Print details for checking and pause.
-          Host.Log("Name: ");
-          Host.Break();
-        }
+      }
+      if(sellOrderCountInGame > 0) {
       }
     }
-    if(sellOrderCountInGame > 0) {
-      foreach(IListEntry sellOrderInGame in sellOrdersInGame) {
-        MemoryStruct.MarketOrderEntry[] orderEntry = sellOrderInGame.ToArray();
-        string orderText = orderEntry?.LabelText[0].Text.ToString();
-        string[] orderTextSplit = orderText.Split('<t>');
-        string orderName = orderTextSplit[0];
-        bool foundName = false;
-        foreach(FileOrderEntry fileOrderEntry in orderEntries) {
-          if(fileOrderEntry.Name.Equals(orderName) && fileOrderEntry.Type.Equals("Sell Order")) {
-            foundName = true;
-            break;
-          }
-        }
-        if(!foundName) {
-          // Add details to FileOrderEntry object
-
-
-
-          //Print details for checking and pause.
-          Host.Log("Name: ");
-          Host.Break();
-        }
-      }
-    }
-  }
-
+  } catch {/*Don't care if this fails*/}
+  
   Something_has_gone_wrong: //label to jump back to if something goes wrong
 
-  foreach(FileOrderEntry fileOrderEntry in orderEntries) {
+  foreach(FileOrderEntry fileOrderEntry in fileOrderEntries) {
 
     //If five mins and 20s has passed since last update then process again
     bool timeToCheck = false;
@@ -869,7 +856,7 @@ for (;;) {
       System.IO.File.Copy(inputFileName, inputFileName + ".bak", true);
       using(FileStream fileStream = new FileStream(inputFileName, FileMode.Create, FileAccess.ReadWrite)) {
         using(var writer = new StreamWriter(fileStream)) {
-          List<FileOrderEntry> SortedList = orderEntries.OrderBy(o=>o.UpdateTime).ToList();
+          List<FileOrderEntry> SortedList = fileOrderEntries.OrderBy(o=>o.UpdateTime).ToList();
           foreach(FileOrderEntry fileOrderEntryToWrite in SortedList) {
             string output = fileOrderEntryToWrite.Name.ToString() + "," + fileOrderEntryToWrite.Type.ToString() + "," + fileOrderEntryToWrite.StartPrice.ToString() + "," + fileOrderEntryToWrite.LowestPrice.ToString() + "," + fileOrderEntryToWrite.HighestPrice.ToString() + "," + fileOrderEntryToWrite.Margin.ToString() + "," + fileOrderEntryToWrite.NumOfPriceChanges.ToString() + "," + fileOrderEntryToWrite.PriceChangeTotalCost.ToString() + "," + fileOrderEntryToWrite.UpdateTime.ToString();
             writer.WriteLine(output);
