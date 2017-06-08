@@ -178,8 +178,8 @@ for (;;) {
   if(myOrders?.BuyOrderView != null && myOrders?.SellOrderView != null) {
     try {
       //If the market is open
-      MemoryStruct.MarketOrderEntry[] buyOrdersInGame = myOrders?.BuyOrderView?.Entry?.ToArray();
-      MemoryStruct.MarketOrderEntry[] sellOrdersInGame = myOrders?.SellOrderView?.Entry?.ToArray();
+      MemoryStruct.IListEntry[] buyOrdersInGame = myOrders?.BuyOrderView?.Entry?.ToArray();
+      MemoryStruct.IListEntry[] sellOrdersInGame = myOrders?.SellOrderView?.Entry?.ToArray();
       int buyOrderCountInGame = buyOrdersInGame.Length;
       int sellOrderCountInGame = sellOrdersInGame.Length;
       if(buyOrderCountInGame > 0) {
@@ -212,9 +212,10 @@ for (;;) {
         }
       }
       if(sellOrderCountInGame > 0) {
+
       }
-    }
-  } catch {/*Don't care if this fails*/}
+    } catch {/*Don't care if this fails*/}
+  }
   
   Something_has_gone_wrong: //label to jump back to if something goes wrong
 
