@@ -184,7 +184,7 @@ for (;;) {
       int sellOrderCountInGame = sellOrdersInGame.Length;
       if(buyOrderCountInGame > 0) {
         foreach(MemoryStruct.MarketOrderEntry buyOrderInGame in buyOrdersInGame) {
-          string orderText = buyOrderInGame.(MemoryStruct.IUIElementText[])LabelText[0].Text.ToString();
+          string orderText = buyOrderInGame.(MemoryStruct.IUIElementText[])LabelText.FirstOrDefault().Text.ToString();
           string[] orderTextSplit = Regex.Split(orderText, @"<t>");
           string gameOrderName = orderTextSplit[0];
           bool foundName = false;
