@@ -212,7 +212,33 @@ for (;;) {
         }
       }
       if(sellOrderCountInGame > 0) {
-
+        foreach(MemoryStruct.MarketOrderEntry sellOrderInGame in sellOrdersInGame) {
+          string orderText = sellOrderInGame.LabelText.FirstOrDefault().Text.ToString();
+          string[] orderTextSplit = Regex.Split(orderText, @"<t>");
+          string gameOrderName = orderTextSplit[0];
+          bool foundName = false;
+          foreach(FileOrderEntry fileOrderEntry in fileOrderEntries) {
+            if(fileOrderEntry.Name.Equals(gameOrderName) && fileOrderEntry.Type.Equals("Sell Order")) {
+              foundName = true;
+              break;
+            }
+          }
+          if(!foundName) {
+            // Add details to FileOrderEntry object
+            string orderPrice = orderTextSplit[2].Substring(7, orderTextSplit[2].Length - 4 - 7);
+            orderPrice = orderPrice.Replace(@",", "");
+            double orderPriceDbl = Convert.ToDouble(orderPrice);
+            double minPrice = CalcMinPrice(orderPriceDbl, 0.0, defaultMargin);
+            double maxPrice = CalcMaxPrice(orderPriceDbl, 0.0, defaultMargin);
+            
+            FileOrderEntry newFileOrder = new FileOrderEntry(gameOrderName, "Sell Order", orderPriceDbl, minPrice, maxPrice, defaultMargin, 0, 0.0, DateTime.Now);
+            fileOrderEntries.Add(newFileOrder);
+    
+            //Print details for checking and pause.
+            Host.Log("Name: " + newFileOrder.Name + "  Price: " + newFileOrder.StartPrice + "  Type: " + newFileOrder.Type + "  Min Price: " + newFileOrder.LowestPrice);
+            Host.Break();
+          }
+        }
       }
     } catch {/*Don't care if this fails*/}
   }
