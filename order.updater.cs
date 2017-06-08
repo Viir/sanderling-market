@@ -366,10 +366,6 @@ for (;;) {
       if (foundOrder == false) {
         Host.Log("Warning: Can't find order " + orderName);
         Console.Beep(500, 1000);
-        Host.Delay(500);
-        Console.Beep(500, 1000);
-        Host.Delay(500);
-        Console.Beep(500, 1000);
       } else {
 
         if (!ClickMenuEntryOnMenuRootJason(getMatchingOrder, "View Market")) {
@@ -485,10 +481,6 @@ for (;;) {
           }
           if (foundBlue == false) {
             Host.Log("No Blue!");
-            Console.Beep(500, 1000);
-            Host.Delay(500);
-            Console.Beep(500, 1000);
-            Host.Delay(500);
             Console.Beep(500, 1000);
           }
 
@@ -696,10 +688,6 @@ for (;;) {
           }
           if (foundBlue == false) {
             Host.Log("No Blue!");
-            Console.Beep(500, 1000);
-            Host.Delay(500);
-            Console.Beep(500, 1000);
-            Host.Delay(500);
             Console.Beep(500, 1000);
           }
 
