@@ -196,7 +196,7 @@ for (;;) {
           }
           if(!foundName) {
             // Add details to FileOrderEntry object
-            string orderPrice = orderTextSplit[2].Substring(0, orderTextSplit[2].Length - 4);
+            string orderPrice = orderTextSplit[2].Substring(7, orderTextSplit[2].Length - 4 - 7);
             orderPrice = orderPrice.Replace(@",", "");
             double orderPriceDbl = Convert.ToDouble(orderPrice);
             double minPrice = CalcMinPrice(orderPriceDbl, 0.0, defaultMargin);
@@ -206,7 +206,7 @@ for (;;) {
             fileOrderEntries.Add(newFileOrder);
     
             //Print details for checking and pause.
-            Host.Log("Name: " + newFileOrder.Name + "  Price: " + newFileOrder.StartPrice + "  Type: " + newFileOrder.Type + "  Min Price: " + newFileOrder.LowestPrice);
+            Host.Log("Name: " + newFileOrder.Name + "  Price: " + newFileOrder.StartPrice + "  Type: " + newFileOrder.Type + "  Max Price: " + newFileOrder.HighestPrice);
             Host.Break();
           }
         }
