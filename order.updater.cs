@@ -173,7 +173,7 @@ void CloseModalUIElementYes() {
 for (;;) {
 
   //Compare the entries in my orders to the object add if not in there.
-  //What margin to use?
+  Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
   var myOrders = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.MyOrders;
   if(myOrders?.BuyOrderView != null && myOrders?.SellOrderView != null) {
     try {
@@ -251,7 +251,7 @@ for (;;) {
     bool timeToCheck = false;
     DateTime a = Convert.ToDateTime(@fileOrderEntry.UpdateTime);
     DateTime b = DateTime.Now;
-    if (Math.Round(b.Subtract(a).TotalSeconds, 0) > 320) {
+    if (Math.Round(b.Subtract(a).TotalSeconds, 0) > 300) {
       timeToCheck = true;
       Host.Log("Time to check: " + fileOrderEntry.Name + " - " + fileOrderEntry.Type);
     }
@@ -883,6 +883,6 @@ for (;;) {
   }
 
   //Check every few seconds for item to be checked
-  int delay = rnd.Next(2423, 5624);
+  int delay = rnd.Next(12423, 15624);
   Host.Delay(delay);
 }
