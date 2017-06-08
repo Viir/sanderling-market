@@ -178,13 +178,12 @@ for (;;) {
   if(myOrders?.BuyOrderView != null && myOrders?.SellOrderView != null) {
     try {
       //If the market is open
-      MemoryStruct.IListEntry[] buyOrdersInGame = myOrders?.BuyOrderView?.Entry?.ToArray();
-      MemoryStruct.IListEntry[] sellOrdersInGame = myOrders?.SellOrderView?.Entry?.ToArray();
+      MemoryStruct.MarketOrderEntry[] buyOrdersInGame = myOrders?.BuyOrderView?.Entry?.ToArray();
+      MemoryStruct.MarketOrderEntry[] sellOrdersInGame = myOrders?.SellOrderView?.Entry?.ToArray();
       int buyOrderCountInGame = buyOrdersInGame.Length;
       int sellOrderCountInGame = sellOrdersInGame.Length;
       if(buyOrderCountInGame > 0) {
-        foreach(MemoryStruct.IListEntry buyOrderInGame in buyOrdersInGame) {
-          MemoryStruct.MarketOrderEntry[] orderEntry = buyOrderInGame.ToArray();
+        foreach(MemoryStruct.MarketOrderEntry buyOrderInGame in buyOrdersInGame) {
           string orderText = orderEntry?.LabelText[0].Text.ToString();
           string[] orderTextSplit = Regex.Split(orderText, @"<t>");
           string gameOrderName = orderTextSplit[0];
