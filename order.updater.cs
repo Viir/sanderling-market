@@ -184,7 +184,7 @@ for (;;) {
       int sellOrderCountInGame = sellOrdersInGame.Length;
       if(buyOrderCountInGame > 0) {
         foreach(MemoryStruct.MarketOrderEntry buyOrderInGame in buyOrdersInGame) {
-          string orderText = buyOrderInGame.(MemoryStruct.IUIElementText[])LabelText.FirstOrDefault().Text.ToString();
+          string orderText = buyOrderInGame.LabelText.FirstOrDefault().Text.ToString();
           string[] orderTextSplit = Regex.Split(orderText, @"<t>");
           string gameOrderName = orderTextSplit[0];
           bool foundName = false;
@@ -196,11 +196,11 @@ for (;;) {
           }
           if(!foundName) {
             // Add details to FileOrderEntry object
-            string orderPrice = orderTextSplit[2].Value.Substring(0, orderTextSplit[2].Value.Length - 4);
+            string orderPrice = orderTextSplit[2].Substring(0, orderTextSplit[2].Length - 4);
             orderPrice = orderPrice.Replace(@",", "");
             double orderPriceDbl = Convert.ToDouble(orderPrice);
-            double minPrice = CalcMinPrice(orderPrice, 0.0, defaultMargin);
-            double maxPrice = CalcMaxPrice(orderPrice, 0.0, defaultMargin);
+            double minPrice = CalcMinPrice(orderPriceDbl, 0.0, defaultMargin);
+            double maxPrice = CalcMaxPrice(orderPriceDbl, 0.0, defaultMargin);
             
             FileOrderEntry newFileOrder = new FileOrderEntry(gameOrderName, "Buy Order", orderPriceDbl, minPrice, maxPrice, defaultMargin, 0, 0.0, DateTime.Now);
             fileOrderEntries.Add(newFileOrder);
