@@ -197,11 +197,13 @@ for (;;) {
           }
           if(!foundName) {
             // Add details to FileOrderEntry object
-            double orderPrice = 0.0;
+            string orderPrice = orderTextSplit[2].Value.Substring(0, orderTextSplit[2].Value.Length - 4);
+            orderPrice = orderPrice.Replace(@",", "");
+            double orderPriceDbl = Convert.ToDouble(orderPrice);
             double minPrice = CalcMinPrice(orderPrice, 0.0, defaultMargin);
             double maxPrice = CalcMaxPrice(orderPrice, 0.0, defaultMargin);
             
-            FileOrderEntry newFileOrder = new FileOrderEntry(gameOrderName, "Buy Order", orderPrice, minPrice, maxPrice, defaultMargin, 0, 0.0, DateTime.Now);
+            FileOrderEntry newFileOrder = new FileOrderEntry(gameOrderName, "Buy Order", orderPriceDbl, minPrice, maxPrice, defaultMargin, 0, 0.0, DateTime.Now);
             fileOrderEntries.Add(newFileOrder);
     
             //Print details for checking and pause.
