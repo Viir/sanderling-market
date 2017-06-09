@@ -594,6 +594,7 @@ for (;;) {
               if (newBluePrice < fileOrderEntry.LowestPrice) {
                 //Price gone too low
                 newBluePrice = 0;
+				Host.Log("Price too low on " + fileOrderEntry.Name);
               }
             }
 
@@ -801,6 +802,7 @@ for (;;) {
               if (newBluePrice > fileOrderEntry.HighestPrice) {
                 //Price gone too high see if we can get next best slot
                 newBluePrice = 0;
+				Host.Log("Price might be too high on " + fileOrderEntry.Name);
                 var entryArray = orderSectionMarketData?.Entry?.ToArray();
                 foreach(var entry in entryArray) {
                   var entryPriceArray = entry?.ListColumnCellLabel?.ToArray();
