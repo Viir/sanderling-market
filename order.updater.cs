@@ -31,7 +31,7 @@ using(FileStream fileStream = new FileStream(inputFileName, FileMode.OpenOrCreat
           double minPrice = CalcMinPrice(Convert.ToDouble(values[2]), Convert.ToDouble(values[3]), Convert.ToDouble(values[5]));
           double maxPrice = CalcMaxPrice(Convert.ToDouble(values[2]), Convert.ToDouble(values[4]), Convert.ToDouble(values[5]));
 
-          FileOrderEntry newFileOrder = new FileOrderEntry(values[0].ToString(), values[1].ToString(), Convert.ToDouble(values[2]), minPrice, maxPrice, Convert.ToDouble(values[5]), Convert.ToInt32(values[6]), Convert.ToDouble(values[7]), Convert.ToDateTime(values[8]));
+          FileOrderEntry newFileOrder = new FileOrderEntry(values[0].ToString(), values[1].ToString(), Convert.ToDouble(values[2]), minPrice, maxPrice, Convert.ToDouble(values[5]), Convert.ToInt32(values[6]), Convert.ToDouble(values[7]), Convert.ToDateTime(values[8]), Convert.ToInt32(values[9]), Convert.ToBoolean(values[10]));
           fileOrderEntries.Add(newFileOrder);
         }
       }
@@ -80,8 +80,16 @@ public class FileOrderEntry {
     get;
     set;
   }
+  public int NotFound {
+    get;
+    set;
+  }
+  public bool OutOfPriceRange {
+    get;
+    set;
+  }
 
-  public FileOrderEntry(string name, string type, double startPrice, double lowestPrice, double highestPrice, double margin, int numOfPriceChanges, double priceChangeTotalCost, DateTime updateTime) {
+  public FileOrderEntry(string name, string type, double startPrice, double lowestPrice, double highestPrice, double margin, int numOfPriceChanges, double priceChangeTotalCost, DateTime updateTime, int notFound, bool outOfPriceRange) {
     Name = name;
     Type = type;
     StartPrice = startPrice;
@@ -91,6 +99,8 @@ public class FileOrderEntry {
     NumOfPriceChanges = numOfPriceChanges;
     PriceChangeTotalCost = priceChangeTotalCost;
     UpdateTime = updateTime;
+    NotFound = notFound;
+    OutOfPriceRange = outOfPriceRange;
   }
 }
 
@@ -202,7 +212,7 @@ for (;;) {
             double minPrice = CalcMinPrice(orderPriceDbl, 0.0, defaultMargin);
             double maxPrice = CalcMaxPrice(orderPriceDbl, 0.0, defaultMargin);
             
-            FileOrderEntry newFileOrder = new FileOrderEntry(gameOrderName, "Buy Order", orderPriceDbl, minPrice, maxPrice, defaultMargin, 0, 0.0, DateTime.Now);
+            FileOrderEntry newFileOrder = new FileOrderEntry(gameOrderName, "Buy Order", orderPriceDbl, minPrice, maxPrice, defaultMargin, 0, 0.0, DateTime.Now, 0, False);
             fileOrderEntries.Add(newFileOrder);
     
             //Print details for checking and pause.
@@ -231,7 +241,7 @@ for (;;) {
             double minPrice = CalcMinPrice(orderPriceDbl, 0.0, defaultMargin);
             double maxPrice = CalcMaxPrice(orderPriceDbl, 0.0, defaultMargin);
             
-            FileOrderEntry newFileOrder = new FileOrderEntry(gameOrderName, "Sell Order", orderPriceDbl, minPrice, maxPrice, defaultMargin, 0, 0.0, DateTime.Now);
+            FileOrderEntry newFileOrder = new FileOrderEntry(gameOrderName, "Sell Order", orderPriceDbl, minPrice, maxPrice, defaultMargin, 0, 0.0, DateTime.Now, 0, False);
             fileOrderEntries.Add(newFileOrder);
     
             //Print details for checking and pause.
@@ -392,6 +402,7 @@ for (;;) {
       if (foundOrder == false) {
         Host.Log("Warning: Can't find order " + orderName);
         Console.Beep(500, 1000);
+        fileOrderEntry.notFound += 1;
       } else {
 
         if (!ClickMenuEntryOnMenuRootJason(getMatchingOrder, "View Market")) {
@@ -508,6 +519,7 @@ for (;;) {
           if (foundBlue == false) {
             Host.Log("No Blue!");
             Console.Beep(500, 1000);
+            fileOrderEntry.notFound += 1;
           }
 
           bool foundBlack = false;
@@ -594,7 +606,9 @@ for (;;) {
               if (newBluePrice < fileOrderEntry.LowestPrice) {
                 //Price gone too low
                 newBluePrice = 0;
-				Host.Log("Price too low on " + fileOrderEntry.Name);
+                Host.Log("Price too low on " + fileOrderEntry.Name);
+                fileOrderEntry.outOfPriceRange = true;
+                Console.Beep(500, 1000);
               }
             }
 
@@ -716,6 +730,7 @@ for (;;) {
           if (foundBlue == false) {
             Host.Log("No Blue!");
             Console.Beep(500, 1000);
+            fileOrderEntry.notFound += 1;
           }
 
           bool foundGreen = false;
@@ -802,8 +817,10 @@ for (;;) {
               if (newBluePrice > fileOrderEntry.HighestPrice) {
                 //Price gone too high see if we can get next best slot
                 newBluePrice = 0;
-				Host.Log("Price might be too high on " + fileOrderEntry.Name);
+                Host.Log("Price might be too high on " + fileOrderEntry.Name);
                 var entryArray = orderSectionMarketData?.Entry?.ToArray();
+                fileOrderEntry.outOfPriceRange = true;
+                Console.Beep(500, 1000);
                 foreach(var entry in entryArray) {
                   var entryPriceArray = entry?.ListColumnCellLabel?.ToArray();
                   string entryPrice = entryPriceArray[2].Value.Substring(0, entryPriceArray[2].Value.Length - 4);
@@ -811,6 +828,7 @@ for (;;) {
                   double entryPriceDbl = Convert.ToDouble(entryPrice);
                   if (entryPriceDbl < fileOrderEntry.HighestPrice - 1 && entryPriceDbl > bluePriceDbl) {
                     newBluePrice = entryPriceDbl + 0.02;
+                    fileOrderEntry.outOfPriceRange = false;
                     break;
                   }
                 }
@@ -876,7 +894,7 @@ for (;;) {
         using(var writer = new StreamWriter(fileStream)) {
           List<FileOrderEntry> SortedList = fileOrderEntries.OrderBy(o=>o.UpdateTime).ToList();
           foreach(FileOrderEntry fileOrderEntryToWrite in SortedList) {
-            string output = fileOrderEntryToWrite.Name.ToString() + "," + fileOrderEntryToWrite.Type.ToString() + "," + fileOrderEntryToWrite.StartPrice.ToString() + "," + fileOrderEntryToWrite.LowestPrice.ToString() + "," + fileOrderEntryToWrite.HighestPrice.ToString() + "," + fileOrderEntryToWrite.Margin.ToString() + "," + fileOrderEntryToWrite.NumOfPriceChanges.ToString() + "," + fileOrderEntryToWrite.PriceChangeTotalCost.ToString() + "," + fileOrderEntryToWrite.UpdateTime.ToString();
+            string output = fileOrderEntryToWrite.Name.ToString() + "," + fileOrderEntryToWrite.Type.ToString() + "," + fileOrderEntryToWrite.StartPrice.ToString() + "," + fileOrderEntryToWrite.LowestPrice.ToString() + "," + fileOrderEntryToWrite.HighestPrice.ToString() + "," + fileOrderEntryToWrite.Margin.ToString() + "," + fileOrderEntryToWrite.NumOfPriceChanges.ToString() + "," + fileOrderEntryToWrite.PriceChangeTotalCost.ToString() + "," + fileOrderEntryToWrite.UpdateTime.ToString() + "," + fileOrderEntryToWrite.NotFound.ToString() + "," + fileOrderEntryToWrite.OutOfPriceRange.ToString();
             writer.WriteLine(output);
           }
         }
