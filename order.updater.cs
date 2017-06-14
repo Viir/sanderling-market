@@ -218,7 +218,7 @@ for (;;) {
             double minPrice = CalcMinPrice(orderPriceDbl, 0.0, defaultMargin);
             double maxPrice = CalcMaxPrice(orderPriceDbl, 0.0, defaultMargin);
             
-            FileOrderEntry newFileOrder = new FileOrderEntry(gameOrderName, "Buy Order", orderPriceDbl, minPrice, maxPrice, defaultMargin, 0, 0.0, DateTime.Now, 0, False);
+            FileOrderEntry newFileOrder = new FileOrderEntry(gameOrderName, "Buy Order", orderPriceDbl, minPrice, maxPrice, defaultMargin, 0, 0.0, DateTime.Now, 0, false);
             fileOrderEntries.Add(newFileOrder);
     
             //Print details for checking and pause.
@@ -247,7 +247,7 @@ for (;;) {
             double minPrice = CalcMinPrice(orderPriceDbl, 0.0, defaultMargin);
             double maxPrice = CalcMaxPrice(orderPriceDbl, 0.0, defaultMargin);
             
-            FileOrderEntry newFileOrder = new FileOrderEntry(gameOrderName, "Sell Order", orderPriceDbl, minPrice, maxPrice, defaultMargin, 0, 0.0, DateTime.Now, 0, False);
+            FileOrderEntry newFileOrder = new FileOrderEntry(gameOrderName, "Sell Order", orderPriceDbl, minPrice, maxPrice, defaultMargin, 0, 0.0, DateTime.Now, 0, false);
             fileOrderEntries.Add(newFileOrder);
     
             //Print details for checking and pause.
@@ -410,7 +410,7 @@ for (;;) {
       if (foundOrder == false) {
         Host.Log("Warning: Can't find order " + orderName);
         Console.Beep(500, 1000);
-        fileOrderEntry.notFound += 1;
+        fileOrderEntry.NotFound += 1;
       } else {
 
         if (!ClickMenuEntryOnMenuRootJason(getMatchingOrder, "View Market")) {
@@ -527,7 +527,7 @@ for (;;) {
           if (foundBlue == false) {
             Host.Log("No Blue!");
             Console.Beep(500, 1000);
-            fileOrderEntry.notFound += 1;
+            fileOrderEntry.NotFound += 1;
           }
 
           bool foundBlack = false;
@@ -615,7 +615,7 @@ for (;;) {
                 //Price gone too low
                 newBluePrice = 0;
                 Host.Log("Price too low on " + fileOrderEntry.Name);
-                fileOrderEntry.outOfPriceRange = true;
+                fileOrderEntry.OutOfPriceRange = true;
                 Console.Beep(500, 1000);
               }
             }
@@ -738,7 +738,7 @@ for (;;) {
           if (foundBlue == false) {
             Host.Log("No Blue!");
             Console.Beep(500, 1000);
-            fileOrderEntry.notFound += 1;
+            fileOrderEntry.NotFound += 1;
           }
 
           bool foundGreen = false;
@@ -827,7 +827,7 @@ for (;;) {
                 newBluePrice = 0;
                 Host.Log("Price might be too high on " + fileOrderEntry.Name);
                 var entryArray = orderSectionMarketData?.Entry?.ToArray();
-                fileOrderEntry.outOfPriceRange = true;
+                fileOrderEntry.OutOfPriceRange = true;
                 Console.Beep(500, 1000);
                 foreach(var entry in entryArray) {
                   var entryPriceArray = entry?.ListColumnCellLabel?.ToArray();
@@ -836,7 +836,7 @@ for (;;) {
                   double entryPriceDbl = Convert.ToDouble(entryPrice);
                   if (entryPriceDbl < fileOrderEntry.HighestPrice - 1 && entryPriceDbl > bluePriceDbl) {
                     newBluePrice = entryPriceDbl + 0.02;
-                    fileOrderEntry.outOfPriceRange = false;
+                    fileOrderEntry.OutOfPriceRange = false;
                     break;
                   }
                 }
