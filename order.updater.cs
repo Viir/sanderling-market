@@ -199,7 +199,13 @@ for (;;) {
           string gameOrderName = orderTextSplit[0];
           bool foundName = false;
           foreach(FileOrderEntry fileOrderEntry in fileOrderEntries) {
-            if(fileOrderEntry.Name.Equals(gameOrderName) && fileOrderEntry.Type.Equals("Buy Order")) {
+            // Remove () as they cause a fail
+            string tempName1 = fileOrderEntry.Name.Replace(@"(", "");
+            tempName1 = tempName1.Replace(@")", "");
+            string tempName2 = gameOrderName.Replace(@"(", "");
+            tempName2 = tempName2.Replace(@")", "");
+            
+            if(tempName1.Equals(tempName2) && fileOrderEntry.Type.Equals("Buy Order")) {
               foundName = true;
               break;
             }
@@ -318,8 +324,10 @@ for (;;) {
         }
       }
 
-      //Find an order in the list that matches order read from file and View Market Details
+      //Find an order in the list that matches order read from file and View Market Details. Remove ()
       orderName = fileOrderEntry.Name.ToString();
+      if(orderName.IndexOf("(") > 0)
+        orderName = fileOrderEntry.Name.ToString().Substring(0,fileOrderEntry.Name.IndexOf("("));
       var getMatchingOrder = orderSectionMyOrders?.Entry?.FirstOrDefault(MatchingOrder);
 
       bool foundOrder = false;
