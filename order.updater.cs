@@ -19,7 +19,8 @@ Random rnd = new Random();
 IWindow ModalUIElement=>Measurement?.EnumerateReferencedUIElementTransitive()?.OfType<IWindow>()?.Where(window=>window?.isModal ?? false)?.OrderByDescending(window=>window?.InTreeIndex ?? int.MinValue)?.FirstOrDefault();
 
 string orderName = "";
-double defaultMargin = 5.0;
+double defaultMargin = 10.0;
+bool foundNew = false;
 
 using(FileStream fileStream = new FileStream(inputFileName, FileMode.OpenOrCreate, FileAccess.ReadWrite)) {
   using(var reader = new StreamReader(fileStream)) {
@@ -180,6 +181,13 @@ void CloseModalUIElementYes() {
   Sanderling.MouseClickLeft(ButtonClose);
 }
 
+void CloseModalUIElement()
+{
+  var ButtonClose = ModalUIElement?.ButtonText?.FirstOrDefault(button => (button?.Text).RegexMatchSuccessIgnoreCase("close|no|ok"));
+  
+  Sanderling.MouseClickLeft(ButtonClose);
+}
+
 for (;;) {
 
   //Compare the entries in my orders to the object add if not in there.
@@ -223,7 +231,8 @@ for (;;) {
     
             //Print details for checking and pause.
             Host.Log("Name: " + newFileOrder.Name + "  Price: " + newFileOrder.StartPrice + "  Type: " + newFileOrder.Type + "  Max Price: " + newFileOrder.HighestPrice);
-            Host.Break();
+            //Host.Break();
+            foundNew = true;
           }
         }
       }
@@ -252,7 +261,9 @@ for (;;) {
     
             //Print details for checking and pause.
             Host.Log("Name: " + newFileOrder.Name + "  Price: " + newFileOrder.StartPrice + "  Type: " + newFileOrder.Type + "  Min Price: " + newFileOrder.LowestPrice);
-            Host.Break();
+            //Host.Break();
+            foundNew = true;
+
           }
         }
       }
@@ -659,6 +670,9 @@ for (;;) {
                 CloseModalUIElementYes();
                 CloseModalUIElementYes();
                 CloseModalUIElementYes();
+                CloseModalUIElement();
+                CloseModalUIElement();
+                CloseModalUIElement();
                 fileOrderEntry.NumOfPriceChanges = fileOrderEntry.NumOfPriceChanges + 1;
                 fileOrderEntry.UpdateTime = DateTime.Now;
                 fileOrderEntry.PriceChangeTotalCost = fileOrderEntry.PriceChangeTotalCost + priceChangeDbl + brokerFeeDbl;
@@ -842,53 +856,59 @@ for (;;) {
                 }
               }
             }
+		try
+		{
+			if (newBluePrice > 0) {
+				if (!ClickMenuEntryOnMenuRootJason(FirstBlue, "Modify Order")) {
+				Host.Log("Failed to Modify Order Buy");
+				goto Something_has_gone_wrong;
+				}
+				Host.Delay(2000);
+				EnterPrice(newBluePrice);
+				//Verify entered value
+				Sanderling.InvalidateMeasurement();
+				Host.Delay(2000);
+				Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+				string enteredNewValueStr = Measurement?.WindowMarketAction?.FirstOrDefault()?.InputText?.FirstOrDefault()?.Text?.ToString();
+				enteredNewValueStr = enteredNewValueStr.Replace(@",", "");
+				double enteredNewValueDbl = Convert.ToDouble(enteredNewValueStr);
 
-            if (newBluePrice > 0) {
-              if (!ClickMenuEntryOnMenuRootJason(FirstBlue, "Modify Order")) {
-                Host.Log("Failed to Modify Order Buy");
-                goto Something_has_gone_wrong;
-              }
-              Host.Delay(2000);
-              EnterPrice(newBluePrice);
-              //Verify entered value
-              Sanderling.InvalidateMeasurement();
-              Host.Delay(2000);
-              Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
-              string enteredNewValueStr = Measurement?.WindowMarketAction?.FirstOrDefault()?.InputText?.FirstOrDefault()?.Text?.ToString();
-              enteredNewValueStr = enteredNewValueStr.Replace(@",", "");
-              double enteredNewValueDbl = Convert.ToDouble(enteredNewValueStr);
+				var actionArray = Measurement?.WindowMarketAction?.FirstOrDefault()?.LabelText?.ToArray();
+				string priceChangeStr = actionArray ? [12]?.Text.ToString();
+				priceChangeStr = priceChangeStr.Substring(0, priceChangeStr.Length - 4);
+				priceChangeStr = priceChangeStr.Replace(@",", "");
+				double priceChangeDbl = Convert.ToDouble(priceChangeStr);
+				priceChangeDbl = Math.Round(priceChangeDbl, 2);
 
-              var actionArray = Measurement?.WindowMarketAction?.FirstOrDefault()?.LabelText?.ToArray();
-              string priceChangeStr = actionArray ? [12]?.Text.ToString();
-              priceChangeStr = priceChangeStr.Substring(0, priceChangeStr.Length - 4);
-              priceChangeStr = priceChangeStr.Replace(@",", "");
-              double priceChangeDbl = Convert.ToDouble(priceChangeStr);
-              priceChangeDbl = Math.Round(priceChangeDbl, 2);
+				string brokerFeeStr = actionArray ? [14]?.Text.ToString();
+				brokerFeeStr = brokerFeeStr.Substring(0, brokerFeeStr.Length - 4);
+				brokerFeeStr = brokerFeeStr.Replace(@",", "");
+				double brokerFeeDbl = Convert.ToDouble(brokerFeeStr);
+				brokerFeeDbl = Math.Round(brokerFeeDbl, 2);
 
-              string brokerFeeStr = actionArray ? [14]?.Text.ToString();
-              brokerFeeStr = brokerFeeStr.Substring(0, brokerFeeStr.Length - 4);
-              brokerFeeStr = brokerFeeStr.Replace(@",", "");
-              double brokerFeeDbl = Convert.ToDouble(brokerFeeStr);
-              brokerFeeDbl = Math.Round(brokerFeeDbl, 2);
+				Host.Log("Entry: " + fileOrderEntry.Name + " New Price: " + newBluePrice + " Entered Price: " + enteredNewValueDbl + " Max Price: " + fileOrderEntry.HighestPrice.ToString() + " Price Change: " + (priceChangeDbl + brokerFeeDbl));
 
-              Host.Log("Entry: " + fileOrderEntry.Name + " New Price: " + newBluePrice + " Entered Price: " + enteredNewValueDbl + " Max Price: " + fileOrderEntry.HighestPrice.ToString() + " Price Change: " + (priceChangeDbl + brokerFeeDbl));
-
-              if (Math.Abs(newBluePrice - enteredNewValueDbl) < 0.011) {
-                //price is as expected so click ok
-                var ButtonOK = Measurement?.WindowMarketAction?.FirstOrDefault()?.ButtonText?.FirstOrDefault(button=>(button?.Text).RegexMatchSuccessIgnoreCase("ok"));
-                Sanderling.MouseClickLeft(ButtonOK);
-                Host.Delay(5000);
-                Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
-                CloseModalUIElementYes();
-                CloseModalUIElementYes();
-                CloseModalUIElementYes();
-                fileOrderEntry.NumOfPriceChanges = fileOrderEntry.NumOfPriceChanges + 1;
-                fileOrderEntry.UpdateTime = DateTime.Now;
-                fileOrderEntry.PriceChangeTotalCost = fileOrderEntry.PriceChangeTotalCost + priceChangeDbl + brokerFeeDbl;
-              }
-            } else {
-              Host.Log("No change needed for " + orderName + " - " + fileOrderEntry.Type);
-            }
+				if (Math.Abs(newBluePrice - enteredNewValueDbl) < 0.011) {
+				//price is as expected so click ok
+				var ButtonOK = Measurement?.WindowMarketAction?.FirstOrDefault()?.ButtonText?.FirstOrDefault(button=>(button?.Text).RegexMatchSuccessIgnoreCase("ok"));
+				Sanderling.MouseClickLeft(ButtonOK);
+				Host.Delay(5000);
+				Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+				CloseModalUIElementYes();
+				CloseModalUIElementYes();
+				CloseModalUIElementYes();
+				fileOrderEntry.NumOfPriceChanges = fileOrderEntry.NumOfPriceChanges + 1;
+				fileOrderEntry.UpdateTime = DateTime.Now;
+				fileOrderEntry.PriceChangeTotalCost = fileOrderEntry.PriceChangeTotalCost + priceChangeDbl + brokerFeeDbl;
+				}
+			} else {
+				Host.Log("No change needed for " + orderName + " - " + fileOrderEntry.Type);
+			}
+		}
+		catch
+		{
+			goto Something_has_gone_wrong;
+		}
           }
         }
       }
@@ -908,6 +928,23 @@ for (;;) {
         }
       }
     }
+  }
+
+  if(foundNew == true)
+  {
+    foundNew = false;
+      //backup input file & save contents of object
+      Host.Log("Writing log.");
+      System.IO.File.Copy(inputFileName, inputFileName + ".bak", true);
+      using(FileStream fileStream = new FileStream(inputFileName, FileMode.Create, FileAccess.ReadWrite)) {
+        using(var writer = new StreamWriter(fileStream)) {
+          List<FileOrderEntry> SortedList = fileOrderEntries.OrderBy(o=>o.UpdateTime).ToList();
+          foreach(FileOrderEntry fileOrderEntryToWrite in SortedList) {
+            string output = fileOrderEntryToWrite.Name.ToString() + "," + fileOrderEntryToWrite.Type.ToString() + "," + fileOrderEntryToWrite.StartPrice.ToString() + "," + fileOrderEntryToWrite.LowestPrice.ToString() + "," + fileOrderEntryToWrite.HighestPrice.ToString() + "," + fileOrderEntryToWrite.Margin.ToString() + "," + fileOrderEntryToWrite.NumOfPriceChanges.ToString() + "," + fileOrderEntryToWrite.PriceChangeTotalCost.ToString() + "," + fileOrderEntryToWrite.UpdateTime.ToString() + "," + fileOrderEntryToWrite.NotFound.ToString() + "," + fileOrderEntryToWrite.OutOfPriceRange.ToString();
+            writer.WriteLine(output);
+          }
+        }
+      }
   }
 
   //Check every few seconds for item to be checked
