@@ -285,6 +285,7 @@ for (;;) {
 
     if (timeToCheck) {
 
+       fileOrderEntry.OutOfPriceRange = false;
       //Ensure Market Window is open
       while (null == Measurement?.WindowRegionalMarket) {
         Host.Log("Open Market");
@@ -420,7 +421,9 @@ for (;;) {
       }
       if (foundOrder == false) {
         Host.Log("Warning: Can't find order " + orderName);
-        Console.Beep(500, 1000);
+        Console.Beep(700, 200);
+        Console.Beep(700, 200);
+        Console.Beep(700, 200);
         fileOrderEntry.NotFound += 1;
       } else {
 
@@ -627,59 +630,69 @@ for (;;) {
                 newBluePrice = 0;
                 Host.Log("Price too low on " + fileOrderEntry.Name);
                 fileOrderEntry.OutOfPriceRange = true;
-                Console.Beep(500, 1000);
+                Console.Beep(500, 100);
+                Console.Beep(800, 100);
+                Console.Beep(500, 100);
+                Console.Beep(800, 100);
+                Console.Beep(500, 100);
               }
             }
+						try
+						{
+							if (newBluePrice > 0) {
+								if (!ClickMenuEntryOnMenuRootJason(FirstBlue, "Modify Order")) {
+									Host.Log("Failed to Modify Order Sell");
+									goto Something_has_gone_wrong;
+								}
+								Host.Delay(2000);
+								EnterPrice(newBluePrice);
+								//Verify entered value
+								Sanderling.InvalidateMeasurement();
+								Host.Delay(2000);
+								Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+								string enteredNewValueStr = Measurement?.WindowMarketAction?.FirstOrDefault()?.InputText?.FirstOrDefault()?.Text?.ToString();
+								enteredNewValueStr = enteredNewValueStr.Replace(@",", "");
+								double enteredNewValueDbl = Convert.ToDouble(enteredNewValueStr);
 
-            if (newBluePrice > 0) {
-              if (!ClickMenuEntryOnMenuRootJason(FirstBlue, "Modify Order")) {
-                Host.Log("Failed to Modify Order Sell");
-                goto Something_has_gone_wrong;
-              }
-              Host.Delay(2000);
-              EnterPrice(newBluePrice);
-              //Verify entered value
-              Sanderling.InvalidateMeasurement();
-              Host.Delay(2000);
-              Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
-              string enteredNewValueStr = Measurement?.WindowMarketAction?.FirstOrDefault()?.InputText?.FirstOrDefault()?.Text?.ToString();
-              enteredNewValueStr = enteredNewValueStr.Replace(@",", "");
-              double enteredNewValueDbl = Convert.ToDouble(enteredNewValueStr);
+								var actionArray = Measurement?.WindowMarketAction?.FirstOrDefault()?.LabelText?.ToArray();
+								string priceChangeStr = actionArray ? [12]?.Text.ToString();
+								priceChangeStr = priceChangeStr.Substring(0, priceChangeStr.Length - 4);
+								priceChangeStr = priceChangeStr.Replace(@",", "");
+								double priceChangeDbl = Convert.ToDouble(priceChangeStr);
+								priceChangeDbl = Math.Round(priceChangeDbl, 2);
 
-              var actionArray = Measurement?.WindowMarketAction?.FirstOrDefault()?.LabelText?.ToArray();
-              string priceChangeStr = actionArray ? [12]?.Text.ToString();
-              priceChangeStr = priceChangeStr.Substring(0, priceChangeStr.Length - 4);
-              priceChangeStr = priceChangeStr.Replace(@",", "");
-              double priceChangeDbl = Convert.ToDouble(priceChangeStr);
-              priceChangeDbl = Math.Round(priceChangeDbl, 2);
+								string brokerFeeStr = actionArray ? [14]?.Text.ToString();
+								brokerFeeStr = brokerFeeStr.Substring(0, brokerFeeStr.Length - 4);
+								brokerFeeStr = brokerFeeStr.Replace(@",", "");
+								double brokerFeeDbl = Convert.ToDouble(brokerFeeStr);
+								brokerFeeDbl = Math.Round(brokerFeeDbl, 2);
 
-              string brokerFeeStr = actionArray ? [14]?.Text.ToString();
-              brokerFeeStr = brokerFeeStr.Substring(0, brokerFeeStr.Length - 4);
-              brokerFeeStr = brokerFeeStr.Replace(@",", "");
-              double brokerFeeDbl = Convert.ToDouble(brokerFeeStr);
-              brokerFeeDbl = Math.Round(brokerFeeDbl, 2);
+								Host.Log("Entry: " + fileOrderEntry.Name + " New Price: " + newBluePrice + " Entered Price: " + enteredNewValueDbl + " Max Price: " + fileOrderEntry.HighestPrice.ToString() + " Price Change: " + (priceChangeDbl + brokerFeeDbl));
 
-              Host.Log("Entry: " + fileOrderEntry.Name + " New Price: " + newBluePrice + " Entered Price: " + enteredNewValueDbl + " Max Price: " + fileOrderEntry.HighestPrice.ToString() + " Price Change: " + (priceChangeDbl + brokerFeeDbl));
-
-              if (Math.Abs(newBluePrice - enteredNewValueDbl) < 0.011) {
-                //price is as expected so click ok
-                var ButtonOK = Measurement?.WindowMarketAction?.FirstOrDefault()?.ButtonText?.FirstOrDefault(button=>(button?.Text).RegexMatchSuccessIgnoreCase("ok"));
-                Sanderling.MouseClickLeft(ButtonOK);
-                Host.Delay(5000);
-                Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
-                CloseModalUIElementYes();
-                CloseModalUIElementYes();
-                CloseModalUIElementYes();
-                CloseModalUIElement();
-                CloseModalUIElement();
-                CloseModalUIElement();
-                fileOrderEntry.NumOfPriceChanges = fileOrderEntry.NumOfPriceChanges + 1;
-                fileOrderEntry.UpdateTime = DateTime.Now;
-                fileOrderEntry.PriceChangeTotalCost = fileOrderEntry.PriceChangeTotalCost + priceChangeDbl + brokerFeeDbl;
-              }
-            } else {
-              Host.Log("No change needed for " + orderName + " - " + fileOrderEntry.Type);
-            }
+								if (Math.Abs(newBluePrice - enteredNewValueDbl) < 0.011) {
+									//price is as expected so click ok
+									var ButtonOK = Measurement?.WindowMarketAction?.FirstOrDefault()?.ButtonText?.FirstOrDefault(button=>(button?.Text).RegexMatchSuccessIgnoreCase("ok"));
+									Sanderling.MouseClickLeft(ButtonOK);
+									Host.Delay(5000);
+									Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+									CloseModalUIElementYes();
+									CloseModalUIElementYes();
+									CloseModalUIElementYes();
+									fileOrderEntry.NumOfPriceChanges = fileOrderEntry.NumOfPriceChanges + 1;
+									fileOrderEntry.UpdateTime = DateTime.Now;
+									fileOrderEntry.PriceChangeTotalCost = fileOrderEntry.PriceChangeTotalCost + priceChangeDbl + brokerFeeDbl;
+								}
+							} else {
+								Host.Log("No change needed for " + orderName + " - " + fileOrderEntry.Type);
+							}
+						}
+						catch
+						{
+							goto Something_has_gone_wrong;
+						}
+						CloseModalUIElement();
+						CloseModalUIElement();
+						CloseModalUIElement();
           }
         } else {
           var FirstBlue = orderSectionMarketData?.Entry?.FirstOrDefault(ContainsBlueBackground);
@@ -842,7 +855,11 @@ for (;;) {
                 Host.Log("Price might be too high on " + fileOrderEntry.Name);
                 var entryArray = orderSectionMarketData?.Entry?.ToArray();
                 fileOrderEntry.OutOfPriceRange = true;
-                Console.Beep(500, 1000);
+                Console.Beep(500, 100);
+                Console.Beep(800, 100);
+                Console.Beep(500, 100);
+                Console.Beep(800, 100);
+                Console.Beep(500, 100);
                 foreach(var entry in entryArray) {
                   var entryPriceArray = entry?.ListColumnCellLabel?.ToArray();
                   string entryPrice = entryPriceArray[2].Value.Substring(0, entryPriceArray[2].Value.Length - 4);
@@ -856,62 +873,68 @@ for (;;) {
                 }
               }
             }
-		try
-		{
-			if (newBluePrice > 0) {
-				if (!ClickMenuEntryOnMenuRootJason(FirstBlue, "Modify Order")) {
-				Host.Log("Failed to Modify Order Buy");
-				goto Something_has_gone_wrong;
-				}
-				Host.Delay(2000);
-				EnterPrice(newBluePrice);
-				//Verify entered value
-				Sanderling.InvalidateMeasurement();
-				Host.Delay(2000);
-				Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
-				string enteredNewValueStr = Measurement?.WindowMarketAction?.FirstOrDefault()?.InputText?.FirstOrDefault()?.Text?.ToString();
-				enteredNewValueStr = enteredNewValueStr.Replace(@",", "");
-				double enteredNewValueDbl = Convert.ToDouble(enteredNewValueStr);
+						try
+						{
+							if (newBluePrice > 0) {
+								if (!ClickMenuEntryOnMenuRootJason(FirstBlue, "Modify Order")) {
+								Host.Log("Failed to Modify Order Buy");
+								goto Something_has_gone_wrong;
+								}
+								Host.Delay(2000);
+								EnterPrice(newBluePrice);
+								//Verify entered value
+								Sanderling.InvalidateMeasurement();
+								Host.Delay(2000);
+								Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+								string enteredNewValueStr = Measurement?.WindowMarketAction?.FirstOrDefault()?.InputText?.FirstOrDefault()?.Text?.ToString();
+								enteredNewValueStr = enteredNewValueStr.Replace(@",", "");
+								double enteredNewValueDbl = Convert.ToDouble(enteredNewValueStr);
 
-				var actionArray = Measurement?.WindowMarketAction?.FirstOrDefault()?.LabelText?.ToArray();
-				string priceChangeStr = actionArray ? [12]?.Text.ToString();
-				priceChangeStr = priceChangeStr.Substring(0, priceChangeStr.Length - 4);
-				priceChangeStr = priceChangeStr.Replace(@",", "");
-				double priceChangeDbl = Convert.ToDouble(priceChangeStr);
-				priceChangeDbl = Math.Round(priceChangeDbl, 2);
+								var actionArray = Measurement?.WindowMarketAction?.FirstOrDefault()?.LabelText?.ToArray();
+								string priceChangeStr = actionArray ? [12]?.Text.ToString();
+								priceChangeStr = priceChangeStr.Substring(0, priceChangeStr.Length - 4);
+								priceChangeStr = priceChangeStr.Replace(@",", "");
+								double priceChangeDbl = Convert.ToDouble(priceChangeStr);
+								priceChangeDbl = Math.Round(priceChangeDbl, 2);
 
-				string brokerFeeStr = actionArray ? [14]?.Text.ToString();
-				brokerFeeStr = brokerFeeStr.Substring(0, brokerFeeStr.Length - 4);
-				brokerFeeStr = brokerFeeStr.Replace(@",", "");
-				double brokerFeeDbl = Convert.ToDouble(brokerFeeStr);
-				brokerFeeDbl = Math.Round(brokerFeeDbl, 2);
+								string brokerFeeStr = actionArray ? [14]?.Text.ToString();
+								brokerFeeStr = brokerFeeStr.Substring(0, brokerFeeStr.Length - 4);
+								brokerFeeStr = brokerFeeStr.Replace(@",", "");
+								double brokerFeeDbl = Convert.ToDouble(brokerFeeStr);
+								brokerFeeDbl = Math.Round(brokerFeeDbl, 2);
 
-				Host.Log("Entry: " + fileOrderEntry.Name + " New Price: " + newBluePrice + " Entered Price: " + enteredNewValueDbl + " Max Price: " + fileOrderEntry.HighestPrice.ToString() + " Price Change: " + (priceChangeDbl + brokerFeeDbl));
+								Host.Log("Entry: " + fileOrderEntry.Name + " New Price: " + newBluePrice + " Entered Price: " + enteredNewValueDbl + " Max Price: " + fileOrderEntry.HighestPrice.ToString() + " Price Change: " + (priceChangeDbl + brokerFeeDbl));
 
-				if (Math.Abs(newBluePrice - enteredNewValueDbl) < 0.011) {
-				//price is as expected so click ok
-				var ButtonOK = Measurement?.WindowMarketAction?.FirstOrDefault()?.ButtonText?.FirstOrDefault(button=>(button?.Text).RegexMatchSuccessIgnoreCase("ok"));
-				Sanderling.MouseClickLeft(ButtonOK);
-				Host.Delay(5000);
-				Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
-				CloseModalUIElementYes();
-				CloseModalUIElementYes();
-				CloseModalUIElementYes();
-				fileOrderEntry.NumOfPriceChanges = fileOrderEntry.NumOfPriceChanges + 1;
-				fileOrderEntry.UpdateTime = DateTime.Now;
-				fileOrderEntry.PriceChangeTotalCost = fileOrderEntry.PriceChangeTotalCost + priceChangeDbl + brokerFeeDbl;
-				}
-			} else {
-				Host.Log("No change needed for " + orderName + " - " + fileOrderEntry.Type);
-			}
-		}
-		catch
-		{
-			goto Something_has_gone_wrong;
-		}
+								if (Math.Abs(newBluePrice - enteredNewValueDbl) < 0.011) {
+								//price is as expected so click ok
+								var ButtonOK = Measurement?.WindowMarketAction?.FirstOrDefault()?.ButtonText?.FirstOrDefault(button=>(button?.Text).RegexMatchSuccessIgnoreCase("ok"));
+								Sanderling.MouseClickLeft(ButtonOK);
+								Host.Delay(5000);
+								Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+								CloseModalUIElementYes();
+								CloseModalUIElementYes();
+								CloseModalUIElementYes();
+								
+								fileOrderEntry.NumOfPriceChanges = fileOrderEntry.NumOfPriceChanges + 1;
+								fileOrderEntry.UpdateTime = DateTime.Now;
+								fileOrderEntry.PriceChangeTotalCost = fileOrderEntry.PriceChangeTotalCost + priceChangeDbl + brokerFeeDbl;
+								}
+							} else {
+								Host.Log("No change needed for " + orderName + " - " + fileOrderEntry.Type);
+							}
+						}
+						catch
+						{
+							goto Something_has_gone_wrong;
+						}
           }
         }
       }
+
+      CloseModalUIElement();
+      CloseModalUIElement();
+      CloseModalUIElement();
+      
       //Click My Orders
       Sanderling.MouseClickLeft(Measurement?.WindowRegionalMarket?.FirstOrDefault()?.RightTabGroup?.ListTab[2]?.RegionInteraction);
 
@@ -938,7 +961,7 @@ for (;;) {
       System.IO.File.Copy(inputFileName, inputFileName + ".bak", true);
       using(FileStream fileStream = new FileStream(inputFileName, FileMode.Create, FileAccess.ReadWrite)) {
         using(var writer = new StreamWriter(fileStream)) {
-          List<FileOrderEntry> SortedList = fileOrderEntries.OrderBy(o=>o.UpdateTime).ToList();
+          List<FileOrderEntry> SortedList = fileOrderEntries.OrderBy(o=>o.NotFound).ToList();
           foreach(FileOrderEntry fileOrderEntryToWrite in SortedList) {
             string output = fileOrderEntryToWrite.Name.ToString() + "," + fileOrderEntryToWrite.Type.ToString() + "," + fileOrderEntryToWrite.StartPrice.ToString() + "," + fileOrderEntryToWrite.LowestPrice.ToString() + "," + fileOrderEntryToWrite.HighestPrice.ToString() + "," + fileOrderEntryToWrite.Margin.ToString() + "," + fileOrderEntryToWrite.NumOfPriceChanges.ToString() + "," + fileOrderEntryToWrite.PriceChangeTotalCost.ToString() + "," + fileOrderEntryToWrite.UpdateTime.ToString() + "," + fileOrderEntryToWrite.NotFound.ToString() + "," + fileOrderEntryToWrite.OutOfPriceRange.ToString();
             writer.WriteLine(output);
