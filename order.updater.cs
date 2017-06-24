@@ -29,10 +29,10 @@ using(FileStream fileStream = new FileStream(inputFileName, FileMode.OpenOrCreat
       var values = line.Split(',');
       try {
         if (!values[0].ToString().Equals("Blank")) {
-          double minPrice = CalcMinPrice(Convert.ToDouble(values[2]), Convert.ToDouble(values[3]), Convert.ToDouble(values[5]));
-          double maxPrice = CalcMaxPrice(Convert.ToDouble(values[2]), Convert.ToDouble(values[4]), Convert.ToDouble(values[5]));
+          double minPrice = CalcMinPrice(Convert.ToDouble(values[3]), Convert.ToDouble(values[5]), defaultMargin);
+          double maxPrice = CalcMaxPrice(Convert.ToDouble(values[3]), Convert.ToDouble(values[7]), defaultMargin);
 
-          FileOrderEntry newFileOrder = new FileOrderEntry(values[0].ToString(), values[1].ToString(), Convert.ToDouble(values[2]), minPrice, maxPrice, Convert.ToDouble(values[5]), Convert.ToInt32(values[6]), Convert.ToDouble(values[7]), Convert.ToDateTime(values[8]), Convert.ToInt32(values[9]), Convert.ToBoolean(values[10]));
+          FileOrderEntry newFileOrder = new FileOrderEntry(values[0].ToString(), values[1].ToString(), Convert.ToDouble(values[3]), minPrice, maxPrice, defaultMargin, 0, 0.00, Convert.ToDateTime(values[9]), Convert.ToInt32(values[11]), Convert.ToBoolean(values[13]));
           fileOrderEntries.Add(newFileOrder);
         }
       }
@@ -944,11 +944,21 @@ for (;;) {
         using(var writer = new StreamWriter(fileStream)) {
           List<FileOrderEntry> SortedList = fileOrderEntries.OrderBy(o=>o.UpdateTime).ToList();
           foreach(FileOrderEntry fileOrderEntryToWrite in SortedList) {
+            string minPrice = "0.00";
+            string maxPrice = "0.00";
+            if(fileOrderEntry.Type.Equals("Sell Order"))
+            {
+              maxPrice = fileOrderEntryToWrite.HighestPrice.ToString();
+            }
+            else
+            {
+              minPrice = fileOrderEntryToWrite.LowestPrice.ToString();
+            }
             string output = fileOrderEntryToWrite.Name.ToString() + "," + 
 		    fileOrderEntryToWrite.Type.ToString() + "," + "__" + "," + 
 		    fileOrderEntryToWrite.StartPrice.ToString() + "," + "__" + "," +
-		    fileOrderEntryToWrite.LowestPrice.ToString() + "," + "__" + "," +
-		    fileOrderEntryToWrite.HighestPrice.ToString() + "," + "__" + "," +
+		    minPrice + "," + "__" + "," +
+		    maxPrice + "," + "__" + "," +
 		    fileOrderEntryToWrite.UpdateTime.ToString() + "," + "__" + "," +
 		    fileOrderEntryToWrite.NotFound.ToString() + "," + "__" + "," +
 		    fileOrderEntryToWrite.OutOfPriceRange.ToString();
@@ -969,11 +979,21 @@ for (;;) {
         using(var writer = new StreamWriter(fileStream)) {
           List<FileOrderEntry> SortedList = fileOrderEntries.OrderBy(o=>o.NotFound).ToList();
           foreach(FileOrderEntry fileOrderEntryToWrite in SortedList) {
+            string minPrice = "0.00";
+            string maxPrice = "0.00";
+            if(fileOrderEntry.Type.Equals("Sell Order"))
+            {
+              maxPrice = fileOrderEntryToWrite.HighestPrice.ToString();
+            }
+            else
+            {
+              minPrice = fileOrderEntryToWrite.LowestPrice.ToString();
+            }
             string output = fileOrderEntryToWrite.Name.ToString() + "," + 
 		    fileOrderEntryToWrite.Type.ToString() + "," + "__" + "," + 
 		    fileOrderEntryToWrite.StartPrice.ToString() + "," + "__" + "," +
-		    fileOrderEntryToWrite.LowestPrice.ToString() + "," + "__" + "," +
-		    fileOrderEntryToWrite.HighestPrice.ToString() + "," + "__" + "," +
+		    minPrice + "," + "__" + "," +
+		    maxPrice + "," + "__" + "," +
 		    fileOrderEntryToWrite.UpdateTime.ToString() + "," + "__" + "," +
 		    fileOrderEntryToWrite.NotFound.ToString() + "," + "__" + "," +
 		    fileOrderEntryToWrite.OutOfPriceRange.ToString();
