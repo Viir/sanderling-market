@@ -283,7 +283,7 @@ for (;;) {
       Host.Log("Time to check: " + fileOrderEntry.Name + " - " + fileOrderEntry.Type);
     }
 
-    if (timeToCheck) {
+    if (timeToCheck && !foundNew) {
 
        fileOrderEntry.OutOfPriceRange = false;
       //Ensure Market Window is open
@@ -543,7 +543,6 @@ for (;;) {
             Console.Beep(500, 1000);
             fileOrderEntry.NotFound += 1;
           }
-
           bool foundBlack = false;
           if (FirstBlack != null) {
             foundBlack = true;
