@@ -946,7 +946,7 @@ for (;;) {
           foreach(FileOrderEntry fileOrderEntryToWrite in SortedList) {
             string minPrice = "0.00";
             string maxPrice = "0.00";
-            if(fileOrderEntry.Type.Equals("Sell Order"))
+            if(fileOrderEntryToWrite.Type.Equals("Sell Order"))
             {
               maxPrice = fileOrderEntryToWrite.HighestPrice.ToString();
             }
@@ -981,7 +981,7 @@ for (;;) {
           foreach(FileOrderEntry fileOrderEntryToWrite in SortedList) {
             string minPrice = "0.00";
             string maxPrice = "0.00";
-            if(fileOrderEntry.Type.Equals("Sell Order"))
+            if(fileOrderEntryToWrite.Type.Equals("Sell Order"))
             {
               maxPrice = fileOrderEntryToWrite.HighestPrice.ToString();
             }
