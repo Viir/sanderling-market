@@ -1,2 +1,32 @@
-Blank,Buy Order,XXXX,0,0,5,0,0,05/23/2016 21:02:39,False
-Blank,Sell Order,XXXX,0,0,5,0,0,05/23/2016 21:02:39,False
+Zainou 'Gypsy' CPU Management EE-601,Sell Order,__,747981.48,__,673183.33,__,0.00,__,06/25/2017 07:00:02,__,0,__,False
+Stasis Webifier I,Buy Order,__,40001.46,__,0.00,__,44001.61,__,06/25/2017 07:01:02,__,0,__,False
+Small Ionic Field Projector II,Buy Order,__,1600020.06,__,0.00,__,1960022.07,__,06/25/2017 07:01:19,__,0,__,False
+Datacore - Laser Physics,Sell Order,__,113886.88,__,102498.19,__,0.00,__,06/25/2017 07:08:58,__,0,__,False
+Arbalest Compact Light Missile Launcher,Sell Order,__,519997.92,__,467998.13,__,0.00,__,06/25/2017 07:09:44,__,0,__,False
+Medium Polycarbon Engine Housing II,Sell Order,__,7597998.38,__,6838198.54,__,0.00,__,06/25/2017 07:10:29,__,0,__,False
+Republic Fleet High Captain Insignia I,Buy Order,__,454901.01,__,0.00,__,500391.11,__,06/25/2017 07:34:13,__,0,__,False
+Arbalest Compact Light Missile Launcher,Buy Order,__,432049.83,__,0.00,__,475254.81,__,06/25/2017 07:34:13,__,0,__,False
+Blood Raider Cerebral Accelerator,Buy Order,__,1100025.04,__,0.00,__,1210027.54,__,06/25/2017 07:34:13,__,0,__,False
+Medium Transverse Bulkhead II,Buy Order,__,4311123.4,__,0.00,__,4742235.74,__,06/25/2017 07:34:13,__,0,__,False
+Small Hydraulic Bay Thrusters II,Buy Order,__,1750020.32,__,0.00,__,1925022.35,__,06/25/2017 07:34:13,__,0,__,False
+Heavy Knave Scoped Energy Nosferatu,Buy Order,__,157000.15,__,0.00,__,172700.16,__,06/25/2017 07:34:43,__,0,__,False
+Republic Fleet Commander Insignia I,Sell Order,__,3640341.66,__,3276307.49,__,0.00,__,06/25/2017 07:35:17,__,0,__,False
+Antipharmakon Thureo,Buy Order,__,800003.6,__,0.00,__,880003.96,__,06/25/2017 07:35:46,__,0,__,False
+Signal Distortion Amplifier II,Buy Order,__,2002932.19,__,0.00,__,2203225.41,__,06/25/2017 07:38:04,__,0,__,False
+Prototype 'Arbalest' Torpedo Launcher,Buy Order,__,51000.54,__,0.00,__,56100.59,__,06/25/2017 07:38:21,__,0,__,False
+Magnetic Field Stabilizer II,Sell Order,__,1157983.94,__,1042185.55,__,0.00,__,06/25/2017 07:38:52,__,0,__,False
+720mm 'Scout' Artillery I,Sell Order,__,3999997.86,__,3199998.07,__,0.00,__,06/25/2017 07:40:21,__,0,__,False
+Medium Transverse Bulkhead II,Sell Order,__,5780499.93,__,5202449.94,__,0.00,__,06/25/2017 07:41:17,__,0,__,False
+Small Hybrid Collision Accelerator I,Sell Order,__,1249798.94,__,1124819.05,__,0.00,__,06/25/2017 07:41:52,__,0,__,False
+Small Anti-EM Screen Reinforcer II,Buy Order,__,1040000.05,__,0.00,__,1144000.06,__,06/25/2017 07:42:20,__,0,__,False
+Small Low Friction Nozzle Joints II,Buy Order,__,1928202.6,__,0.00,__,2121022.86,__,06/25/2017 07:42:37,__,0,__,False
+Tungsten Carbide Armor Plate,Buy Order,__,8526.38,__,0.00,__,9400.13,__,06/25/2017 07:42:54,__,0,__,False
+Datacore - Laser Physics,Buy Order,__,91020.04,__,0.00,__,100122.04,__,06/25/2017 07:43:14,__,0,__,False
+Magnetic Field Stabilizer II,Buy Order,__,950148.03,__,0.00,__,1045162.83,__,06/25/2017 07:43:37,__,0,__,False
+250mm Railgun II,Buy Order,__,1916029.02,__,0.00,__,2107631.92,__,06/25/2017 07:44:00,__,0,__,False
+1400mm 'Scout' Artillery I,Buy Order,__,2886241.37,__,0.00,__,3174865.51,__,06/25/2017 07:44:18,__,0,__,False
+Large Remote Capacitor Transmitter II,Buy Order,__,3351006.2,__,0.00,__,3686106.82,__,06/25/2017 07:44:52,__,0,__,False
+Datacore - Plasma Physics,Buy Order,__,77010.67,__,0.00,__,84711.74,__,06/25/2017 07:45:33,__,0,__,False
+Small Hybrid Burst Aerator I,Buy Order,__,660018.04,__,0.00,__,726019.84,__,06/25/2017 07:45:52,__,0,__,False
+Pulse Shield Emitter,Buy Order,__,47415.19,__,0.00,__,52156.71,__,06/25/2017 07:46:09,__,0,__,False
+Medium Trimark Armor Pump II,Buy Order,__,15354624.81,__,0.00,__,16890087.29,__,06/25/2017 07:46:27,__,0,__,False

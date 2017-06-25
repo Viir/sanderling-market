@@ -1,6 +1,8 @@
+#r "System.Windows.Forms"
 using Parse = Sanderling.Parse;
 using MemoryStruct = Sanderling.Interface.MemoryStruct;
 using System.IO;
+
 
 //TODO:
 //TODO:
@@ -10,6 +12,7 @@ using System.IO;
 
 var Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
 string inputFileName = @"C:\Users\Jason\Documents\Visual Studio 2017\Projects\GitHub Eve\trunk\MarketLog.txt";
+string orderFileName = @"C:\Users\Jason\Documents\Visual Studio 2017\Projects\GitHub Eve\trunk\MarketOrders.txt";
 bool ContainsBlueBackground(MemoryStruct.IListEntry Entry)=>Entry?.ListBackgroundColor?.Any(BackgroundColor=>111 < BackgroundColor?.OMilli && 777 < BackgroundColor?.BMilli && BackgroundColor?.RMilli < 111 && BackgroundColor?.GMilli < 111) ?? false;
 bool ContainsGreenBackground(MemoryStruct.IListEntry Entry)=>Entry?.ListBackgroundColor?.Any(BackgroundColor=>111 < BackgroundColor?.OMilli && 777 < BackgroundColor?.GMilli && BackgroundColor?.RMilli < 111 && BackgroundColor?.BMilli < 111) ?? false;
 bool ContainsBlackBackground(MemoryStruct.IListEntry Entry)=>Entry?.ListBackgroundColor?.Any(BackgroundColor=>BackgroundColor?.OMilli > 450 && BackgroundColor?.BMilli > 240 && BackgroundColor?.RMilli > 240 && BackgroundColor?.GMilli > 240) ?? true;
@@ -21,7 +24,7 @@ IWindow ModalUIElement=>Measurement?.EnumerateReferencedUIElementTransitive()?.O
 string orderName = "";
 double defaultMargin = 10.0;
 bool foundNew = false;
-
+    
 using(FileStream fileStream = new FileStream(inputFileName, FileMode.OpenOrCreate, FileAccess.ReadWrite)) {
   using(var reader = new StreamReader(fileStream)) {
     while (!reader.EndOfStream) {
@@ -42,6 +45,120 @@ using(FileStream fileStream = new FileStream(inputFileName, FileMode.OpenOrCreat
     }
   }
 }
+
+
+
+
+try
+{
+	using(FileStream fileStream = new FileStream(orderFileName, FileMode.Open, FileAccess.Read)) {
+	  using(var reader = new StreamReader(fileStream)) {
+	    while (!reader.EndOfStream) {
+	      var line = reader.ReadLine();
+	      var values = Regex.Split(line,@"\t ");
+	      
+	    	  string itemName = values[0];
+	    	  string itemQuantity =  values[1];
+	    	  string itemPrice =  values[2];
+		itemPrice = itemPrice.Replace(",","");
+		itemQuantity = itemQuantity.Replace(",","");
+	    	  itemQuantity = Convert.ToInt32(Convert.ToDouble(itemQuantity)+1).ToString();
+	    	  bool foundItem = false;
+	    	  foreach(FileOrderEntry fileEntry in fileOrderEntries)
+	    	  {
+	    	  	if(itemName.Equals(fileEntry.Name) && fileEntry.Type.Equals("Buy Order"))
+	    	  	{
+	    	  	  foundItem = true;
+	    	  	}
+	    	  }
+	    	  if(foundItem == false)
+	    	  {
+		      //Click My Orders
+		      Sanderling.MouseClickLeft(Measurement?.WindowRegionalMarket?.FirstOrDefault()?.RightTabGroup?.ListTab[2]?.RegionInteraction);
+		
+		      //Wait for MyOrders to be populated
+		      Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+		      var myOrders = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.MyOrders;
+		      while (myOrders == null) {
+		        Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+		        Sanderling.MouseClickLeft(Measurement?.WindowRegionalMarket?.FirstOrDefault()?.RightTabGroup?.ListTab[2]?.RegionInteraction);
+		        myOrders = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.MyOrders;
+		        Host.Delay(5000);
+		      }
+	    	  
+			Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+			myOrders = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.MyOrders;
+			if(myOrders?.BuyOrderView != null && myOrders?.SellOrderView != null) {
+				Sanderling.MouseClickLeft(Measurement?.WindowRegionalMarket?.FirstOrDefault()?.InputText?.FirstOrDefault()?.RegionInteraction);
+				Sanderling.KeyboardPressCombined(new[]{ VirtualKeyCode.LCONTROL, VirtualKeyCode.VK_A});
+				Sanderling.KeyboardPress(VirtualKeyCode.DELETE);
+				Sanderling.TextEntry(itemName);
+				Sanderling.MouseClickLeft(Measurement?.WindowRegionalMarket?.FirstOrDefault()?.ButtonText?.FirstOrDefault()?.RegionInteraction);
+				Host.Delay(5000);
+
+MakeSureDoClick:
+				Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+				var ListOfEntries =  Measurement?.WindowRegionalMarket?.FirstOrDefault()?.LabelText?.ToArray();
+				bool doneClick = false;
+				foreach(var entry in ListOfEntries)
+				{
+					if(entry.Text.Equals(itemName))
+					{
+					  Sanderling.MouseClickLeft(entry.RegionInteraction);
+					  doneClick = true;
+					  break;
+					}
+				}
+				if(!doneClick)
+				{
+				  Host.Delay(1000);
+					goto MakeSureDoClick;
+				}
+				
+				Host.Delay(5000);
+				Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+				foreach( var button in Measurement?.WindowRegionalMarket?.FirstOrDefault()?.ButtonText)
+				{
+					if(button.Text.Equals("Place Buy Order"))
+					{
+		                        Sanderling.MouseClickLeft(button.RegionInteraction);
+		                        break;
+					}
+				}
+				Host.Delay(5000);
+				Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+				Sanderling.MouseClickLeft(Measurement?.WindowMarketAction?.FirstOrDefault()?.InputText?.ElementAt(0).RegionInteraction);
+				Sanderling.KeyboardPressCombined(new[]{ VirtualKeyCode.LCONTROL, VirtualKeyCode.VK_A});
+				Sanderling.KeyboardPress(VirtualKeyCode.DELETE);
+				double newPrice = Convert.ToDouble(itemPrice);
+				newPrice += 20;
+				EnterPrice(newPrice);
+				Sanderling.MouseClickLeft(Measurement?.WindowMarketAction?.FirstOrDefault()?.InputText?.ElementAt(1).RegionInteraction);
+				Sanderling.KeyboardPressCombined(new[]{ VirtualKeyCode.LCONTROL, VirtualKeyCode.VK_A});
+				Sanderling.KeyboardPress(VirtualKeyCode.DELETE);
+				Sanderling.TextEntry(itemQuantity);
+				Host.Delay(1000);
+				Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+				var ButtonOK = Measurement?.WindowMarketAction?.FirstOrDefault()?.ButtonText?.FirstOrDefault(button=>(button?.Text).RegexMatchSuccessIgnoreCase("buy"));
+				Sanderling.MouseClickLeft(ButtonOK);
+				Host.Delay(5000);
+				Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+				CloseModalUIElementYes();
+				CloseModalUIElementYes();
+				CloseModalUIElementYes();				
+			    }
+	    	        }
+		      }
+		    }
+		  }
+		}
+catch {}
+
+
+
+
+
+
 
 
 public class FileOrderEntry {
@@ -187,6 +304,21 @@ void CloseModalUIElement()
   
   Sanderling.MouseClickLeft(ButtonClose);
 }
+
+//Click My Orders
+Sanderling.MouseClickLeft(Measurement?.WindowRegionalMarket?.FirstOrDefault()?.RightTabGroup?.ListTab[2]?.RegionInteraction);
+
+//Wait for MyOrders to be populated
+Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+var myOrders = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.MyOrders;
+while (myOrders == null) {
+  Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+  Sanderling.MouseClickLeft(Measurement?.WindowRegionalMarket?.FirstOrDefault()?.RightTabGroup?.ListTab[2]?.RegionInteraction);
+  myOrders = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.MyOrders;
+  Host.Delay(5000);
+}
+Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+
 
 for (;;) {
 
@@ -948,11 +1080,11 @@ for (;;) {
             string maxPrice = "0.00";
             if(fileOrderEntryToWrite.Type.Equals("Sell Order"))
             {
-              maxPrice = fileOrderEntryToWrite.HighestPrice.ToString();
+              minPrice = fileOrderEntryToWrite.LowestPrice.ToString();
             }
             else
             {
-              minPrice = fileOrderEntryToWrite.LowestPrice.ToString();
+              maxPrice = fileOrderEntryToWrite.HighestPrice.ToString();
             }
             string output = fileOrderEntryToWrite.Name.ToString() + "," + 
 		    fileOrderEntryToWrite.Type.ToString() + "," + "__" + "," + 
@@ -983,11 +1115,11 @@ for (;;) {
             string maxPrice = "0.00";
             if(fileOrderEntryToWrite.Type.Equals("Sell Order"))
             {
-              maxPrice = fileOrderEntryToWrite.HighestPrice.ToString();
+              minPrice = fileOrderEntryToWrite.LowestPrice.ToString();
             }
             else
             {
-              minPrice = fileOrderEntryToWrite.LowestPrice.ToString();
+              maxPrice = fileOrderEntryToWrite.HighestPrice.ToString();
             }
             string output = fileOrderEntryToWrite.Name.ToString() + "," + 
 		    fileOrderEntryToWrite.Type.ToString() + "," + "__" + "," + 
