@@ -332,7 +332,35 @@ for (;;) {
       MemoryStruct.IListEntry[] sellOrdersInGame = myOrders?.SellOrderView?.Entry?.ToArray();
       int buyOrderCountInGame = buyOrdersInGame.Length;
       int sellOrderCountInGame = sellOrdersInGame.Length;
+      
+      //Calculate how much ISK is invested
+      double totalInvested = 0.0;
       if(buyOrderCountInGame > 0) {
+        foreach(MemoryStruct.MarketOrderEntry buyOrderInGame in buyOrdersInGame) {
+          string orderText = buyOrderInGame.LabelText.FirstOrDefault().Text.ToString();
+          string[] orderTextSplit = Regex.Split(orderText, @"<t>");
+          string orderQuantities = orderTextSplit[1];
+          string orderPrice = orderTextSplit[2];
+          string totalToBuy = Regex.Split(orderQuantities, @"/")[1].Replace(@"<right>", "").Replace(@",", "").Replace(@" ISK", "");
+          orderPrice = orderPrice.Replace(@"<right>", "").Replace(@",", "").Replace(@" ISK", "");
+          totalInvested += (ConvertTo.Int32(totalToBuy) * Convert.ToDouble(orderPrice)) * 1.1;
+        }
+      }
+      if(sellOrderCountInGame > 0) {
+        foreach(MemoryStruct.MarketOrderEntry sellOrderInGame in sellOrdersInGame) {
+          string orderText = sellOrderInGame.LabelText.FirstOrDefault().Text.ToString();
+          string[] orderTextSplit = Regex.Split(orderText, @"<t>");
+          string orderQuantities = orderTextSplit[1];
+          string orderPrice = orderTextSplit[2];
+          string totalToSell = Regex.Split(orderQuantities, @"/")[0];
+          totalToSell = totalToSell.Replace(@"<right>", "").Replace(@",", "").Replace(@" ISK", "");
+          orderPrice = orderPrice.Replace(@"<right>", "").Replace(@",", "").Replace(@" ISK", "");
+          totalInvested += (ConvertTo.Int32(totalToBuy) * Convert.ToDouble(orderPrice)) * 1.1;
+        }
+      }
+      Host.Log("Total Invested = " + totalInvested);
+      
+	    if(buyOrderCountInGame > 0) {
         foreach(MemoryStruct.MarketOrderEntry buyOrderInGame in buyOrdersInGame) {
           string orderText = buyOrderInGame.LabelText.FirstOrDefault().Text.ToString();
           string[] orderTextSplit = Regex.Split(orderText, @"<t>");
