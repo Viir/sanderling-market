@@ -349,7 +349,7 @@ for (;;) {
           totalInvested += (Convert.ToInt32(totalToSell) * Convert.ToDouble(orderPrice)) * 1.1;
         }
       }
-      Host.Log("Total Invested = " + totalInvested);
+      Host.Log(@String.Format("Total Invested = {0:N}", totalInvested));
 
       if (buyOrderCountInGame>0) {
         foreach(MemoryStruct.MarketOrderEntry buyOrderInGame in buyOrdersInGame) {
