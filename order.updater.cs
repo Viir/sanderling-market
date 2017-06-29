@@ -334,7 +334,7 @@ for (;;) {
           string orderPrice = orderTextSplit[2];
           string totalToBuy = Regex.Split(orderQuantities, @"/")[1].Replace(@"<right>", "").Replace(@",", "").Replace(@" ISK", "");
           orderPrice = orderPrice.Replace(@"<right>", "").Replace(@",", "").Replace(@" ISK", "");
-          totalInvested += (ConvertTo.Int32(totalToBuy) * Convert.ToDouble(orderPrice)) * 1.1;
+          totalInvested += (Convert.ToInt32(totalToBuy) * Convert.ToDouble(orderPrice)) * 1.1;
         }
       }
       if (sellOrderCountInGame>0) {
@@ -346,7 +346,7 @@ for (;;) {
           string totalToSell = Regex.Split(orderQuantities, @"/")[0];
           totalToSell = totalToSell.Replace(@"<right>", "").Replace(@",", "").Replace(@" ISK", "");
           orderPrice = orderPrice.Replace(@"<right>", "").Replace(@",", "").Replace(@" ISK", "");
-          totalInvested += (ConvertTo.Int32(totalToBuy) * Convert.ToDouble(orderPrice)) * 1.1;
+          totalInvested += (Convert.ToInt32(totalToSell) * Convert.ToDouble(orderPrice)) * 1.1;
         }
       }
       Host.Log("Total Invested = " + totalInvested);
@@ -371,7 +371,7 @@ for (;;) {
           }
           if (!foundName) {
             // Add details to FileOrderEntry object
-            string orderPrice = orderTextSplit[2].Substring(7 a, orderTextSplit[2].Length - 4 - 7);
+            string orderPrice = orderTextSplit[2].Substring(7, orderTextSplit[2].Length - 4 - 7);
             orderPrice = orderPrice.Replace(@",", "");
             double orderPriceDbl = Convert.ToDouble(orderPrice);
             double minPrice = CalcMinPrice(orderPriceDbl, 0.0, defaultMargin);
