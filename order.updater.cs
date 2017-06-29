@@ -121,6 +121,9 @@ try {
       Host.Delay(5000);
       Measurement = Sanderling ? .MemoryMeasurementParsed ? .Value;
       Sanderling.MouseClickLeft(Measurement ? .WindowMarketAction ? .FirstOrDefault() ? .InputText ? .ElementAt(0).RegionInteraction);
+      Host.Delay(500);
+      Sanderling.MouseClickLeft(Measurement ? .WindowMarketAction ? .FirstOrDefault() ? .InputText ? .ElementAt(0).RegionInteraction);
+      Host.Delay(500);
       Sanderling.KeyboardPressCombined(new [] {
        VirtualKeyCode.LCONTROL, VirtualKeyCode.VK_A
       });
@@ -128,7 +131,11 @@ try {
       double newPrice = Convert.ToDouble(itemPrice);
       newPrice += 20;
       EnterPrice(newPrice);
+      Host.Delay(500);
       Sanderling.MouseClickLeft(Measurement ? .WindowMarketAction ? .FirstOrDefault() ? .InputText ? .ElementAt(1).RegionInteraction);
+      Host.Delay(500);
+      Sanderling.MouseClickLeft(Measurement ? .WindowMarketAction ? .FirstOrDefault() ? .InputText ? .ElementAt(1).RegionInteraction);
+      Host.Delay(500);
       Sanderling.KeyboardPressCombined(new [] {
        VirtualKeyCode.LCONTROL, VirtualKeyCode.VK_A
       });
