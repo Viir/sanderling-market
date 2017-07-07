@@ -376,7 +376,8 @@ for (;;) {
             double orderPriceDbl = Convert.ToDouble(orderPrice);
             double minPrice = CalcMinPrice(orderPriceDbl, 0.0, defaultMargin);
             double maxPrice = CalcMaxPrice(orderPriceDbl, 0.0, defaultMargin);
-
+            //double maxPrice = sell price - 10%
+              
             FileOrderEntry newFileOrder = new FileOrderEntry(gameOrderName, "Buy Order", orderPriceDbl, minPrice, maxPrice, defaultMargin, 0, 0.0, DateTime.Now, 0, false);
             fileOrderEntries.Add(newFileOrder);
 
@@ -406,7 +407,8 @@ for (;;) {
             double orderPriceDbl = Convert.ToDouble(orderPrice);
             double minPrice = CalcMinPrice(orderPriceDbl, 0.0, defaultMargin);
             double maxPrice = CalcMaxPrice(orderPriceDbl, 0.0, defaultMargin);
-
+            //double minPrice = sell price - 10%
+              
             FileOrderEntry newFileOrder = new FileOrderEntry(gameOrderName, "Sell Order", orderPriceDbl, minPrice, maxPrice, defaultMargin, 0, 0.0, DateTime.Now, 0, false);
             fileOrderEntries.Add(newFileOrder);
 
@@ -425,7 +427,7 @@ for (;;) {
 
   Something_has_gone_wrong: //label to jump back to if something goes wrong
   int totalOrders = fileOrderEntries.Count;
-	int loopCount = 1;
+  int loopCount = 1;
   foreach(FileOrderEntry fileOrderEntry in fileOrderEntries) {
 
     //If five mins and 20s has passed since last update then process again
