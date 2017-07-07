@@ -424,7 +424,8 @@ for (;;) {
   }
 
   Something_has_gone_wrong: //label to jump back to if something goes wrong
-
+  int totalOrders = fileOrderEntries.Count;
+	int loopCount = 1;
   foreach(FileOrderEntry fileOrderEntry in fileOrderEntries) {
 
     //If five mins and 20s has passed since last update then process again
@@ -441,7 +442,6 @@ for (;;) {
       fileOrderEntry.OutOfPriceRange = false;
       //Ensure Market Window is open
       while (null == Measurement?.WindowRegionalMarket) {
-        Host.Log("Open Market");
         if (null == Measurement?.WindowRegionalMarket) {
           Sanderling.MouseClickLeft(Measurement?.Neocom?.MarketButton);
         }
@@ -625,8 +625,8 @@ for (;;) {
 
           var FirstBlue = orderSectionMarketData?.Entry?.FirstOrDefault(ContainsBlueBackground);
           var FirstBlack = orderSectionMarketData?.Entry?.FirstOrDefault(ContainsBlackBackground);
-          Host.Log("FirstBlue: " + string.Join(", ", FirstBlue?.ListColumnCellLabel?.Select(ColumnCellLabel=>ColumnCellLabel.Key?.Text + " : " + ColumnCellLabel.Value)?.ToArray() ?? new string[0]));
-          Host.Log("FirstBlack: " + string.Join(", ", FirstBlack?.ListColumnCellLabel?.Select(ColumnCellLabel=>ColumnCellLabel.Key?.Text + " : " + ColumnCellLabel.Value)?.ToArray() ?? new string[0]));
+          //Host.Log("FirstBlue: " + string.Join(", ", FirstBlue?.ListColumnCellLabel?.Select(ColumnCellLabel=>ColumnCellLabel.Key?.Text + " : " + ColumnCellLabel.Value)?.ToArray() ?? new string[0]));
+          //Host.Log("FirstBlack: " + string.Join(", ", FirstBlack?.ListColumnCellLabel?.Select(ColumnCellLabel=>ColumnCellLabel.Key?.Text + " : " + ColumnCellLabel.Value)?.ToArray() ?? new string[0]));
 
           bool foundBlue = false;
           if (FirstBlue != null) {
@@ -791,7 +791,7 @@ for (;;) {
             try {
               if (newBluePrice>0) {
                 if (!ClickMenuEntryOnMenuRootJason(FirstBlue, "Modify Order")) {
-                  Host.Log("Failed to Modify Order Sell");
+                  //Host.Log("Failed to Modify Order Sell");
                   goto Something_has_gone_wrong;
                 }
                 Host.Delay(2000);
@@ -817,7 +817,7 @@ for (;;) {
                 double brokerFeeDbl = Convert.ToDouble(brokerFeeStr);
                 brokerFeeDbl = Math.Round(brokerFeeDbl, 2);
 
-                Host.Log("Entry: " + fileOrderEntry.Name + " New Price: " + newBluePrice + " Entered Price: " + enteredNewValueDbl + " Max Price: " + fileOrderEntry.HighestPrice.ToString() + " Price Change: " + (priceChangeDbl + brokerFeeDbl));
+                //Host.Log("Entry: " + fileOrderEntry.Name + " New Price: " + newBluePrice + " Entered Price: " + enteredNewValueDbl + " Max Price: " + fileOrderEntry.HighestPrice.ToString() + " Price Change: " + (priceChangeDbl + brokerFeeDbl));
 
                 if (Math.Abs(newBluePrice - enteredNewValueDbl)<0.011) {
                   //price is as expected so click ok
@@ -833,7 +833,7 @@ for (;;) {
                   fileOrderEntry.PriceChangeTotalCost = fileOrderEntry.PriceChangeTotalCost + priceChangeDbl + brokerFeeDbl;
                 }
               } else {
-                Host.Log("No change needed for " + orderName + " - " + fileOrderEntry.Type);
+                //Host.Log("No change needed for " + orderName + " - " + fileOrderEntry.Type);
               }
             } catch {
               goto Something_has_gone_wrong;
@@ -845,8 +845,8 @@ for (;;) {
         } else {
           var FirstBlue = orderSectionMarketData?.Entry?.FirstOrDefault(ContainsBlueBackground);
           var FirstGreen = orderSectionMarketData?.Entry?.FirstOrDefault(ContainsGreenBackground);
-          Host.Log("FirstBlue: " + string.Join(", ", FirstBlue?.ListColumnCellLabel?.Select(ColumnCellLabel=>ColumnCellLabel.Key?.Text + " : " + ColumnCellLabel.Value)?.ToArray() ?? new string[0]));
-          Host.Log("FirstGreen: " + string.Join(", ", FirstGreen?.ListColumnCellLabel?.Select(ColumnCellLabel=>ColumnCellLabel.Key?.Text + " : " + ColumnCellLabel.Value)?.ToArray() ?? new string[0]));
+          //Host.Log("FirstBlue: " + string.Join(", ", FirstBlue?.ListColumnCellLabel?.Select(ColumnCellLabel=>ColumnCellLabel.Key?.Text + " : " + ColumnCellLabel.Value)?.ToArray() ?? new string[0]));
+          //Host.Log("FirstGreen: " + string.Join(", ", FirstGreen?.ListColumnCellLabel?.Select(ColumnCellLabel=>ColumnCellLabel.Key?.Text + " : " + ColumnCellLabel.Value)?.ToArray() ?? new string[0]));
 
           bool foundBlue = false;
           if (FirstBlue != null) {
@@ -993,7 +993,7 @@ for (;;) {
             string greenPriceStr = greenPriceArray[2].Value.Substring(0, greenPriceArray[2].Value.Length - 4);
             greenPriceStr = greenPriceStr.Replace(@",", "");
             double greenPriceDbl = Convert.ToDouble(greenPriceStr);
-            Host.Log("Price Diff: " + (greenPriceDbl - bluePriceDbl));
+            //Host.Log("Price Diff: " + (greenPriceDbl - bluePriceDbl));
             double newBluePrice = 0;
             if (Math.Abs(greenPriceDbl - bluePriceDbl)<0.001 || greenPriceDbl - bluePriceDbl>0.005) {
               newBluePrice = greenPriceDbl + 0.04;
@@ -1050,7 +1050,7 @@ for (;;) {
                 double brokerFeeDbl = Convert.ToDouble(brokerFeeStr);
                 brokerFeeDbl = Math.Round(brokerFeeDbl, 2);
 
-                Host.Log("Entry: " + fileOrderEntry.Name + " New Price: " + newBluePrice + " Entered Price: " + enteredNewValueDbl + " Max Price: " + fileOrderEntry.HighestPrice.ToString() + " Price Change: " + (priceChangeDbl + brokerFeeDbl));
+                //Host.Log("Entry: " + fileOrderEntry.Name + " New Price: " + newBluePrice + " Entered Price: " + enteredNewValueDbl + " Max Price: " + fileOrderEntry.HighestPrice.ToString() + " Price Change: " + (priceChangeDbl + brokerFeeDbl));
 
                 if (Math.Abs(newBluePrice - enteredNewValueDbl)<0.011) {
                   //price is as expected so click ok
@@ -1067,7 +1067,7 @@ for (;;) {
                   fileOrderEntry.PriceChangeTotalCost = fileOrderEntry.PriceChangeTotalCost + priceChangeDbl + brokerFeeDbl;
                 }
               } else {
-                Host.Log("No change needed for " + orderName + " - " + fileOrderEntry.Type);
+                //Host.Log("No change needed for " + orderName + " - " + fileOrderEntry.Type);
               }
             } catch {
               goto Something_has_gone_wrong;
@@ -1084,11 +1084,11 @@ for (;;) {
       Sanderling.MouseClickLeft(Measurement?.WindowRegionalMarket?.FirstOrDefault()?.RightTabGroup?.ListTab[2]?.RegionInteraction);
 
       //backup input file & save contents of object
-      Host.Log("Writing log.");
+      //Host.Log("Writing log.");
       System.IO.File.Copy(inputFileName, inputFileName + ".bak", true);
       using(FileStream fileStream = new FileStream(inputFileName, FileMode.Create, FileAccess.ReadWrite)) {
         using(var writer = new StreamWriter(fileStream)) {
-          List<FileOrderEntry>SortedList = fileOrderEntries.OrderBy(o=>o.UpdateTime).ToList();
+        List<FileOrderEntry>SortedList = fileOrderEntries.OrderByDescending(o=>o.NotFound).ThenByDescending(o=>o.OutOfPriceRange).ToList();
           foreach(FileOrderEntry fileOrderEntryToWrite in SortedList) {
             string minPrice = "0.00";
             string maxPrice = "0.00";
@@ -1103,16 +1103,17 @@ for (;;) {
         }
       }
     }
+		Host.Log("Done: " + loopCount++.ToString() + " of " + totalOrders);
   }
 
   if (foundNew == true) {
     foundNew = false;
     //backup input file & save contents of object
-    Host.Log("Writing log.");
+    //Host.Log("Writing log.");
     System.IO.File.Copy(inputFileName, inputFileName + ".bak", true);
     using(FileStream fileStream = new FileStream(inputFileName, FileMode.Create, FileAccess.ReadWrite)) {
       using(var writer = new StreamWriter(fileStream)) {
-        List<FileOrderEntry>SortedList = fileOrderEntries.OrderBy(o=>o.NotFound).ToList();
+        List<FileOrderEntry>SortedList = fileOrderEntries.OrderByDescending(o=>o.NotFound).ThenByDescending(o=>o.OutOfPriceRange).ToList();
         foreach(FileOrderEntry fileOrderEntryToWrite in SortedList) {
           string minPrice = "0.00";
           string maxPrice = "0.00";
@@ -1129,6 +1130,7 @@ for (;;) {
   }
 
   //Check every few seconds for item to be checked
+  Console.Beep(700, 200);
   int delay = rnd.Next(12423, 15624);
   Host.Delay(delay);
 }

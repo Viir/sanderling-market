@@ -1,32 +1,35 @@
-Zainou 'Gypsy' CPU Management EE-601,Sell Order,__,747981.48,__,673183.33,__,0.00,__,06/25/2017 07:00:02,__,0,__,False
-Stasis Webifier I,Buy Order,__,40001.46,__,0.00,__,44001.61,__,06/25/2017 07:01:02,__,0,__,False
-Small Ionic Field Projector II,Buy Order,__,1600020.06,__,0.00,__,1960022.07,__,06/25/2017 07:01:19,__,0,__,False
-Datacore - Laser Physics,Sell Order,__,113886.88,__,102498.19,__,0.00,__,06/25/2017 07:08:58,__,0,__,False
-Arbalest Compact Light Missile Launcher,Sell Order,__,519997.92,__,467998.13,__,0.00,__,06/25/2017 07:09:44,__,0,__,False
-Medium Polycarbon Engine Housing II,Sell Order,__,7597998.38,__,6838198.54,__,0.00,__,06/25/2017 07:10:29,__,0,__,False
-Republic Fleet High Captain Insignia I,Buy Order,__,454901.01,__,0.00,__,500391.11,__,06/25/2017 07:34:13,__,0,__,False
-Arbalest Compact Light Missile Launcher,Buy Order,__,432049.83,__,0.00,__,475254.81,__,06/25/2017 07:34:13,__,0,__,False
-Blood Raider Cerebral Accelerator,Buy Order,__,1100025.04,__,0.00,__,1210027.54,__,06/25/2017 07:34:13,__,0,__,False
-Medium Transverse Bulkhead II,Buy Order,__,4311123.4,__,0.00,__,4742235.74,__,06/25/2017 07:34:13,__,0,__,False
-Small Hydraulic Bay Thrusters II,Buy Order,__,1750020.32,__,0.00,__,1925022.35,__,06/25/2017 07:34:13,__,0,__,False
-Heavy Knave Scoped Energy Nosferatu,Buy Order,__,157000.15,__,0.00,__,172700.16,__,06/25/2017 07:34:43,__,0,__,False
-Republic Fleet Commander Insignia I,Sell Order,__,3640341.66,__,3276307.49,__,0.00,__,06/25/2017 07:35:17,__,0,__,False
-Antipharmakon Thureo,Buy Order,__,800003.6,__,0.00,__,880003.96,__,06/25/2017 07:35:46,__,0,__,False
-Signal Distortion Amplifier II,Buy Order,__,2002932.19,__,0.00,__,2203225.41,__,06/25/2017 07:38:04,__,0,__,False
-Prototype 'Arbalest' Torpedo Launcher,Buy Order,__,51000.54,__,0.00,__,56100.59,__,06/25/2017 07:38:21,__,0,__,False
-Magnetic Field Stabilizer II,Sell Order,__,1157983.94,__,1042185.55,__,0.00,__,06/25/2017 07:38:52,__,0,__,False
-720mm 'Scout' Artillery I,Sell Order,__,3999997.86,__,3199998.07,__,0.00,__,06/25/2017 07:40:21,__,0,__,False
-Medium Transverse Bulkhead II,Sell Order,__,5780499.93,__,5202449.94,__,0.00,__,06/25/2017 07:41:17,__,0,__,False
-Small Hybrid Collision Accelerator I,Sell Order,__,1249798.94,__,1124819.05,__,0.00,__,06/25/2017 07:41:52,__,0,__,False
-Small Anti-EM Screen Reinforcer II,Buy Order,__,1040000.05,__,0.00,__,1144000.06,__,06/25/2017 07:42:20,__,0,__,False
-Small Low Friction Nozzle Joints II,Buy Order,__,1928202.6,__,0.00,__,2121022.86,__,06/25/2017 07:42:37,__,0,__,False
-Tungsten Carbide Armor Plate,Buy Order,__,8526.38,__,0.00,__,9400.13,__,06/25/2017 07:42:54,__,0,__,False
-Datacore - Laser Physics,Buy Order,__,91020.04,__,0.00,__,100122.04,__,06/25/2017 07:43:14,__,0,__,False
-Magnetic Field Stabilizer II,Buy Order,__,950148.03,__,0.00,__,1045162.83,__,06/25/2017 07:43:37,__,0,__,False
-250mm Railgun II,Buy Order,__,1916029.02,__,0.00,__,2107631.92,__,06/25/2017 07:44:00,__,0,__,False
-1400mm 'Scout' Artillery I,Buy Order,__,2886241.37,__,0.00,__,3174865.51,__,06/25/2017 07:44:18,__,0,__,False
-Large Remote Capacitor Transmitter II,Buy Order,__,3351006.2,__,0.00,__,3686106.82,__,06/25/2017 07:44:52,__,0,__,False
-Datacore - Plasma Physics,Buy Order,__,77010.67,__,0.00,__,84711.74,__,06/25/2017 07:45:33,__,0,__,False
-Small Hybrid Burst Aerator I,Buy Order,__,660018.04,__,0.00,__,726019.84,__,06/25/2017 07:45:52,__,0,__,False
-Pulse Shield Emitter,Buy Order,__,47415.19,__,0.00,__,52156.71,__,06/25/2017 07:46:09,__,0,__,False
-Medium Trimark Armor Pump II,Buy Order,__,15354624.81,__,0.00,__,16890087.29,__,06/25/2017 07:46:27,__,0,__,False
+Guidance Disruptor II,Buy Order,__,1007081.35,__,0.00,__,1907789.49,__,07/07/2017 06:44:40,__,0,__,False
+Drone Link Augmentor I,Sell Order,__,325001.31,__,292501.18,__,0.00,__,07/07/2017 06:45:03,__,0,__,False
+Imperial Navy Sergeant Insignia I,Buy Order,__,165096.09,__,0.00,__,192605.7,__,07/07/2017 06:45:21,__,0,__,False
+Small Projectile Collision Accelerator II,Buy Order,__,2000531.21,__,0.00,__,2600584.33,__,07/07/2017 06:47:48,__,0,__,False
+Dread Guristas Rapid Light Missile Launcher,Sell Order,__,69999999.75,__,49999999.78,__,0.00,__,07/07/2017 06:42:12,__,0,__,False
+Cynosural Field Theory,Buy Order,__,8305221.3,__,0.00,__,9135743.43,__,07/07/2017 02:05:06,__,0,__,False
+Medium Electrochemical Capacitor Booster I,Buy Order,__,88022.55,__,0.00,__,210824.8,__,07/07/2017 06:42:35,__,0,__,False
+Medium Drone Mining Augmentor II,Buy Order,__,17239928.98,__,0.00,__,18963921.88,__,07/07/2017 06:42:53,__,0,__,False
+Council Diplomatic Shuttle,Buy Order,__,1183020.07,__,0.00,__,1301322.08,__,07/07/2017 06:33:22,__,0,__,False
+Zainou 'Gypsy' CPU Management EE-601,Buy Order,__,455023.6,__,0.00,__,500525.96,__,07/07/2017 06:48:40,__,0,__,False
+Light Neutron Blaster I,Buy Order,__,8014.17,__,0.00,__,8815.59,__,07/07/2017 05:47:24,__,0,__,False
+Caldari Navy Small Shield Extender,Buy Order,__,3028821.29,__,0.00,__,3331703.42,__,07/07/2017 06:34:17,__,0,__,False
+Large Higgs Anchor I,Buy Order,__,2501024.73,__,0.00,__,2751127.2,__,07/07/2017 06:49:09,__,0,__,False
+Medium Command Processor I,Buy Order,__,400025.54,__,0.00,__,440028.09,__,07/07/2017 06:34:51,__,0,__,False
+Inherent Implants 'Squire' Power Grid Management EG-601,Buy Order,__,500023.29,__,0.00,__,550025.62,__,07/07/2017 06:46:17,__,0,__,False
+200mm Prototype Gauss Gun,Sell Order,__,1671016.72,__,1503915.05,__,0.00,__,07/07/2017 06:35:31,__,0,__,False
+Polarized Rocket Launcher,Sell Order,__,17219999.94,__,15497999.95,__,0.00,__,07/07/2017 06:35:53,__,0,__,False
+Standard Crash Booster,Sell Order,__,2612004.53,__,2350804.08,__,0.00,__,07/07/2017 06:49:59,__,0,__,False
+Gist X-Type Kinetic Deflection Field,Sell Order,__,15040815.14,__,13536733.63,__,0.00,__,07/07/2017 06:20:48,__,0,__,False
+5MN Y-T8 Compact Microwarpdrive,Buy Order,__,323030.61,__,0.00,__,355333.67,__,07/07/2017 06:47:19,__,0,__,False
+Biochemical Silo,Buy Order,__,8800036.61,__,0.00,__,9680040.27,__,07/07/2017 06:37:03,__,0,__,False
+Caldari Navy Co-Processor,Buy Order,__,47910029.19,__,0.00,__,52701032.11,__,07/07/2017 06:37:22,__,0,__,False
+Centum C-Type Medium Remote Armor Repairer,Buy Order,__,15500124.32,__,0.00,__,17050136.75,__,07/07/2017 06:37:39,__,0,__,False
+Corpum A-Type Energized Thermal Membrane,Buy Order,__,38000321.04,__,0.00,__,41800353.14,__,07/07/2017 06:37:56,__,0,__,False
+Corpus X-Type Armor Kinetic Hardener,Buy Order,__,25000045.74,__,0.00,__,27500050.31,__,07/07/2017 06:38:13,__,0,__,False
+Corpus X-Type Armor Thermal Hardener,Buy Order,__,50000038.48,__,0.00,__,55000042.33,__,07/07/2017 06:38:30,__,0,__,False
+Domination Heavy Stasis Grappler,Buy Order,__,75673993.29,__,0.00,__,83241392.62,__,07/07/2017 06:38:48,__,0,__,False
+High-grade Asklepian Alpha,Buy Order,__,83000171.98,__,0.00,__,91300189.18,__,07/07/2017 06:39:05,__,0,__,False
+Large Cargohold Optimization II,Buy Order,__,20670072.69,__,0.00,__,22737079.96,__,07/07/2017 06:39:23,__,0,__,False
+Mid-grade Asklepian Alpha,Buy Order,__,40500595.57,__,0.00,__,44550655.13,__,07/07/2017 06:39:42,__,0,__,False
+Pith X-Type Large Shield Booster,Buy Order,__,75316709.38,__,0.00,__,82848380.32,__,07/07/2017 06:39:59,__,0,__,False
+True Sansha Medium Energy Neutralizer,Buy Order,__,63001067.07,__,0.00,__,69301173.78,__,07/07/2017 06:40:16,__,0,__,False
+True Sansha Warp Disruption Field Generator,Buy Order,__,45000043.95,__,0.00,__,49500048.35,__,07/07/2017 06:40:33,__,0,__,False
+True Sansha Warp Scrambler,Buy Order,__,100125189.34,__,0.00,__,110137708.27,__,07/07/2017 06:40:50,__,0,__,False
+Gist X-Type Shield Boost Amplifier,Sell Order,__,179999999.95,__,161999999.95,__,0.00,__,07/07/2017 06:31:35,__,0,__,False
