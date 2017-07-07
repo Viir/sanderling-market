@@ -54,9 +54,13 @@ try {
         string itemName = values[0];
         string itemQuantity = values[1];
         string itemPrice = values[2];
+        string itemSellPrice = values[3;
+        
         itemPrice = itemPrice.Replace(",", "");
         itemQuantity = itemQuantity.Replace(",", "");
-        itemQuantity = Convert.ToInt32(Convert.ToDouble(itemQuantity) + 1).ToString();
+        itemQuantity = Convert.ToInt32(Convert.ToDouble(itemQuantity)).ToString();
+        itemSellPrice = itemSellPrice.Replace(",", "");
+        
         bool foundItem = false;
         foreach(FileOrderEntry fileEntry in fileOrderEntries) {
           if (itemName.Equals(fileEntry.Name) && fileEntry.Type.Equals("Buy Order")) {
@@ -147,6 +151,14 @@ try {
             CloseModalUIElementYes();
             CloseModalUIElementYes();
             CloseModalUIElementYes();
+            
+            //Create a new FileOrderEntry here
+            double minPrice = 0.0;
+            double maxPrice = CalcMinPrice(Convert.ToDouble(itemSellPrice), 0.0, defaultMargin);
+            
+            FileOrderEntry newFileOrder = new FileOrderEntry(itemName, "Buy Order", newPrice, minPrice, maxPrice, defaultMargin, 0, 0.0, DateTime.Now, 0, false);
+            fileOrderEntries.Add(newFileOrder);
+            
           }
         }
       }
@@ -346,7 +358,7 @@ for (;;) {
           string totalToSell = Regex.Split(orderQuantities, @"/")[0];
           totalToSell = totalToSell.Replace(@"<right>", "").Replace(@",", "").Replace(@" ISK", "");
           orderPrice = orderPrice.Replace(@"<right>", "").Replace(@",", "").Replace(@" ISK", "");
-          totalInvested += (Convert.ToInt32(totalToSell) * Convert.ToDouble(orderPrice)) * 1.1;
+          totalInvested += (Convert.ToInt32(totalToSell) * Convert.ToDouble(orderPrice));
         }
       }
       Host.Log(@String.Format("Total Invested = {0:N}", totalInvested));
@@ -376,7 +388,6 @@ for (;;) {
             double orderPriceDbl = Convert.ToDouble(orderPrice);
             double minPrice = CalcMinPrice(orderPriceDbl, 0.0, defaultMargin);
             double maxPrice = CalcMaxPrice(orderPriceDbl, 0.0, defaultMargin);
-            //double maxPrice = sell price - 10%
               
             FileOrderEntry newFileOrder = new FileOrderEntry(gameOrderName, "Buy Order", orderPriceDbl, minPrice, maxPrice, defaultMargin, 0, 0.0, DateTime.Now, 0, false);
             fileOrderEntries.Add(newFileOrder);
@@ -407,7 +418,6 @@ for (;;) {
             double orderPriceDbl = Convert.ToDouble(orderPrice);
             double minPrice = CalcMinPrice(orderPriceDbl, 0.0, defaultMargin);
             double maxPrice = CalcMaxPrice(orderPriceDbl, 0.0, defaultMargin);
-            //double minPrice = sell price - 10%
               
             FileOrderEntry newFileOrder = new FileOrderEntry(gameOrderName, "Sell Order", orderPriceDbl, minPrice, maxPrice, defaultMargin, 0, 0.0, DateTime.Now, 0, false);
             fileOrderEntries.Add(newFileOrder);
