@@ -54,7 +54,7 @@ try {
         string itemName = values[0];
         string itemQuantity = values[1];
         string itemPrice = values[2];
-        string itemSellPrice = values[3;
+        string itemSellPrice = values[3];
         
         itemPrice = itemPrice.Replace(",", "");
         itemQuantity = itemQuantity.Replace(",", "");
