@@ -1,9 +1,10 @@
 #r "System.Windows.Forms"
+
 using Parse = Sanderling.Parse;
 using MemoryStruct = Sanderling.Interface.MemoryStruct;
 using System.IO;
 
-//TODO:
+//TODO: If found new sell order calc top price 
 //TODO:
 //Host.Break(); // Halts execution until user continues
 
@@ -21,7 +22,7 @@ Random rnd = new Random();
 IWindow ModalUIElement=>Measurement?.EnumerateReferencedUIElementTransitive()?.OfType<IWindow>()?.Where(window=>window?.isModal ?? false)?.OrderByDescending(window=>window?.InTreeIndex ?? int.MinValue)?.FirstOrDefault();
 
 string orderName = "";
-double defaultMargin = 10.0;
+double defaultMargin = 15.0;
 bool foundNew = false;
 
 using(FileStream fileStream = new FileStream(inputFileName, FileMode.OpenOrCreate, FileAccess.ReadWrite)) {
@@ -165,6 +166,11 @@ try {
     }
   }
 } catch {}
+
+//clear the file
+try {
+  File.Create(orderFileName).Close();
+} catch{}
 
 public class FileOrderEntry {
   public string Name {
@@ -412,14 +418,67 @@ for (;;) {
             }
           }
           if (!foundName) {
+            //Get highest buying price and add defaultmargin
+            if (!ClickMenuEntryOnMenuRootJason(sellOrderInGame, "View Market")) {
+              Host.Log("Failed View Market Details");
+            }
+            int retryCount = 0;
+            while (Measurement?.WindowRegionalMarket ? [0]?.SelectedItemTypeDetails?.MarketData?.BuyerView == null && Measurement?.WindowRegionalMarket ? [0]?.SelectedItemTypeDetails?.MarketData?.SellerView == null) {
+              if (retryCount++>30) {
+                Host.Log("Failed View Market Details");
+              }
+              Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+              Host.Delay(200);
+            }
+            var orderSectionMarketData = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.SelectedItemTypeDetails?.MarketData?.BuyerView;
+            while (orderSectionMarketData == null) {
+              Host.Delay(500);
+              Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+              orderSectionMarketData = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.SelectedItemTypeDetails?.MarketData?.BuyerView;
+            }
+            while (orderSectionMarketData?.Entry?.FirstOrDefault() == null) {
+              Host.Delay(500);
+              Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+              orderSectionMarketData = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.SelectedItemTypeDetails?.MarketData?.BuyerView;
+            }            
+            var firstOrder = orderSectionMarketData?.Entry?.FirstOrDefault();
+            var firstPriceArray = firstOrder?.ListColumnCellLabel?.ToArray();
+            string firstPriceStr = firstPriceArray[2].Value.Substring(0, firstPriceArray[2].Value.Length - 4);
+            firstPriceStr = firstPriceStr.Replace(@",", "");
+            double firstPriceDbl = Convert.ToDouble(firstPriceStr);
+            firstPriceDbl = CalcMaxPrice(firstPriceDbl, 0.0, defaultMargin);
+            
+            //Click My Orders
+            Sanderling.MouseClickLeft(Measurement?.WindowRegionalMarket?.FirstOrDefault()?.RightTabGroup?.ListTab[2]?.RegionInteraction);
+
+            //Wait for MyOrders to be populated
+            Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+            myOrders = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.MyOrders;
+            while (myOrders == null) {
+              Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+              Sanderling.MouseClickLeft(Measurement?.WindowRegionalMarket?.FirstOrDefault()?.RightTabGroup?.ListTab[2]?.RegionInteraction);
+              myOrders = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.MyOrders;
+              Host.Delay(1000);
+            }
+            
             // Add details to FileOrderEntry object
             string orderPrice = orderTextSplit[2].Substring(7, orderTextSplit[2].Length - 4 - 7);
             orderPrice = orderPrice.Replace(@",", "");
             double orderPriceDbl = Convert.ToDouble(orderPrice);
             double minPrice = CalcMinPrice(orderPriceDbl, 0.0, defaultMargin);
             double maxPrice = CalcMaxPrice(orderPriceDbl, 0.0, defaultMargin);
-              
-            FileOrderEntry newFileOrder = new FileOrderEntry(gameOrderName, "Sell Order", orderPriceDbl, minPrice, maxPrice, defaultMargin, 0, 0.0, DateTime.Now, 0, false);
+            
+            double useMinPrice = 0.0;
+            //System.Windows.Forms.DialogResult dialogResult = System.Windows.Forms.MessageBox.Show("Use auto calc value of: " + @String.Format("{0:N}", firstPriceDbl.ToString()), "Check lowest selling price", System.Windows.Forms.MessageBoxButtons.YesNo);
+            //if(dialogResult == System.Windows.Forms.DialogResult.Yes)
+            //{
+                useMinPrice = firstPriceDbl;
+            //}
+            //else if (dialogResult == System.Windows.Forms.DialogResult.No)
+            //{
+               // useMinPrice = minPrice;
+            //}              
+            FileOrderEntry newFileOrder = new FileOrderEntry(gameOrderName, "Sell Order", orderPriceDbl, useMinPrice, maxPrice, defaultMargin, 0, 0.0, DateTime.Now, 0, false);
             fileOrderEntries.Add(newFileOrder);
 
             //Print details for checking and pause.
