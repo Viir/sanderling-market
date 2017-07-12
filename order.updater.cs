@@ -495,7 +495,7 @@ for (;;) {
             foundNew = true;
             
             //Something is going wrong when there are more than one new selling item.
-
+            goto foundNewLoopBack;
           }
         }
       }
