@@ -315,6 +315,8 @@ void CloseModalUIElement() {
   Sanderling.MouseClickLeft(ButtonClose);
 }
 
+foundNewLoopBack:
+
 //Click My Orders
 Sanderling.MouseClickLeft(Measurement?.WindowRegionalMarket?.FirstOrDefault()?.RightTabGroup?.ListTab[2]?.RegionInteraction);
 
@@ -411,12 +413,18 @@ for (;;) {
           string[] orderTextSplit = Regex.Split(orderText, @"<t>");
           string gameOrderName = orderTextSplit[0];
           bool foundName = false;
+          
+          Host.Log("Trying to get MD for: " + gameOrderName);
+          Host.Log("Record contains: " + orderText);
+          Host.Log("Array contains: " + sellOrdersInGame.Length.ToString());
+          
           foreach(FileOrderEntry fileOrderEntry in fileOrderEntries) {
             if (fileOrderEntry.Name.Equals(gameOrderName) && fileOrderEntry.Type.Equals("Sell Order")) {
               foundName = true;
               break;
             }
           }
+          
           if (!foundName) {
             //Get highest buying price and add defaultmargin
             if (!ClickMenuEntryOnMenuRootJason(sellOrderInGame, "View Market")) {
@@ -485,6 +493,8 @@ for (;;) {
             Host.Log("Name: " + newFileOrder.Name + "  Price: " + newFileOrder.StartPrice + "  Type: " + newFileOrder.Type + "  Min Price: " + newFileOrder.LowestPrice);
             //Host.Break();
             foundNew = true;
+            
+            //Something is going wrong when there are more than one new selling item.
 
           }
         }
@@ -1174,7 +1184,7 @@ for (;;) {
         }
       }
     }
-		Host.Log("Done: " + loopCount++.ToString() + " of " + totalOrders);
+    Host.Log("Done: " + loopCount++.ToString() + " of " + totalOrders);
   }
 
   if (foundNew == true) {
