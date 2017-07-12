@@ -414,10 +414,6 @@ for (;;) {
           string gameOrderName = orderTextSplit[0];
           bool foundName = false;
           
-          Host.Log("Trying to get MD for: " + gameOrderName);
-          Host.Log("Record contains: " + orderText);
-          Host.Log("Array contains: " + sellOrdersInGame.Length.ToString());
-          
           foreach(FileOrderEntry fileOrderEntry in fileOrderEntries) {
             if (fileOrderEntry.Name.Equals(gameOrderName) && fileOrderEntry.Type.Equals("Sell Order")) {
               foundName = true;
