@@ -4,7 +4,7 @@ using Parse = Sanderling.Parse;
 using MemoryStruct = Sanderling.Interface.MemoryStruct;
 using System.IO;
 
-//TODO: If found new sell order calc top price 
+//TODO:
 //TODO:
 //Host.Break(); // Halts execution until user continues
 
@@ -315,6 +315,12 @@ void CloseModalUIElement() {
   Sanderling.MouseClickLeft(ButtonClose);
 }
 
+void CheckPriceColumnHeader() {
+  
+  
+  
+}
+
 foundNewLoopBack:
 
 //Click My Orders
@@ -504,6 +510,9 @@ for (;;) {
   int totalOrders = fileOrderEntries.Count;
   int loopCount = 1;
   foreach(FileOrderEntry fileOrderEntry in fileOrderEntries) {
+    
+    //Check that the price column headers are set correctly otherwise blue price will be off screen
+    CheckPriceColumnHeader();
 
     //If five mins and 20s has passed since last update then process again
     bool timeToCheck = false;
