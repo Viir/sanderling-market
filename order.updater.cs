@@ -319,87 +319,74 @@ void CloseModalUIElement() {
 }
 
 void CheckPriceColumnHeader() {
-  //Click My Orders
-  Sanderling.MouseClickLeft(Measurement?.WindowRegionalMarket?.FirstOrDefault()?.RightTabGroup?.ListTab[2]?.RegionInteraction);
-
-  //Wait for MyOrders to be populated
-  Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
-  var myOrders = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.MyOrders;
-  while (myOrders == null) {
+  var orderSectionMarketData = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.SelectedItemTypeDetails?.MarketData?.BuyerView;
+  while (orderSectionMarketData == null) {
+    Host.Delay(500);
     Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
-    Sanderling.MouseClickLeft(Measurement?.WindowRegionalMarket?.FirstOrDefault()?.RightTabGroup?.ListTab[2]?.RegionInteraction);
-    var myOrders = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.MyOrders;
-    Host.Delay(5000);
+    orderSectionMarketData = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.SelectedItemTypeDetails?.MarketData?.BuyerView;
   }
-
-  Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
-  myOrders = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.MyOrders;
-  
-  MemoryStruct.IListEntry[] buyOrdersInGame = myOrders?.BuyOrderView?.Entry?.ToArray();
-  if(buyOrdersInGame.Length > 1) {
-    MemoryStruct.MarketOrderEntry firstBuyOrder = buyOrdersInGame.ElementAt(0);
-    string firstBuyOrderText = firstBuyOrder.LabelText.FirstOrDefault().Text.ToString();
-    string[] firstBuyOrderTextSplit = Regex.Split(firstBuyOrderText, @"<t>");
-    string firstBuyOrderPrice = firstBuyOrderTextSplit[2];
-    firstBuyOrderPrice = firstBuyOrderPrice.Replace(@"<right>", "").Replace(@",", "").Replace(@" ISK", "");
-    double dblFirstBuyOrderPrice = Convert.ToDbl(firstBuyOrderPrice);
-    
-    boolean foundBadSort = false;
-    for(int i = 1; i < buyOrdersInGame.Length; i++) {
-      MemoryStruct.MarketOrderEntry buyOrderInGame = buyOrdersInGame[i];
-      string orderText = buyOrderInGame.LabelText.FirstOrDefault().Text.ToString();
-      string[] orderTextSplit = Regex.Split(orderText, @"<t>");
-      string orderPrice = orderTextSplit[2];
-      orderPrice = orderPrice.Replace(@"<right>", "").Replace(@",", "").Replace(@" ISK", "");
-      double dblOrderPrice = Convert.ToDbl(orderPrice);
-      if(dblFirstBuyOrderPrice < dblOrderPrice) {
-        foundBadSort = true;
-        break;
-      }
-    }
-    if(foundBadSort) {
-      Host.Log("Buy Price sorting incorrect.");
-    }
-  }
-
-  MemoryStruct.IListEntry[] sellOrdersInGame = myOrders?.SellOrderView?.Entry?.ToArray();
-  if(sellOrdersInGame.Length > 1) {
-    MemoryStruct.MarketOrderEntry firstSellOrder = sellOrdersInGame.ElementAt(0);
-    string firstSellOrderText = firstSellOrder.LabelText.FirstOrDefault().Text.ToString();
-    string[] firstSellOrderTextSplit = Regex.Split(firstSellOrderText, @"<t>");
-    string firstSellOrderPrice = firstSellOrderTextSplit[2];
-    firstSellOrderPrice = firstSellOrderPrice.Replace(@"<right>", "").Replace(@",", "").Replace(@" ISK", "");
-    double dblFirstSellOrderPrice = Convert.ToDbl(firstSellOrderPrice);
-    
-    boolean foundBadSort = false;
-    for(int i = 1; i < sellOrdersInGame.Length; i++) {
-      MemoryStruct.MarketOrderEntry sellOrderInGame = sellOrdersInGame[i];
-      string orderText = sellOrderInGame.LabelText.FirstOrDefault().Text.ToString();
-      string[] orderTextSplit = Regex.Split(orderText, @"<t>");
-      string orderPrice = orderTextSplit[2];
-      orderPrice = orderPrice.Replace(@"<right>", "").Replace(@",", "").Replace(@" ISK", "");
-      double dblOrderPrice = Convert.ToDbl(orderPrice);
-      if(dblFirstSellOrderPrice > dblOrderPrice) {
-        foundBadSort = true;
-        break;
-      }
-    }
-    if(foundBadSort) {
-      Host.Log("Sell Price sorting incorrect.");
-    }
-  }
-  
-  //Click My Orders
-  Sanderling.MouseClickLeft(Measurement?.WindowRegionalMarket?.FirstOrDefault()?.RightTabGroup?.ListTab[2]?.RegionInteraction);
-
-  //Wait for MyOrders to be populated
-  Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
-  var myOrders = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.MyOrders;
-  while (myOrders == null) {
+  while (orderSectionMarketData?.Entry?.FirstOrDefault() == null) {
+    Host.Delay(500);
     Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
-    Sanderling.MouseClickLeft(Measurement?.WindowRegionalMarket?.FirstOrDefault()?.RightTabGroup?.ListTab[2]?.RegionInteraction);
-    var myOrders = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.MyOrders;
-    Host.Delay(5000);
+    orderSectionMarketData = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.SelectedItemTypeDetails?.MarketData?.BuyerView;
+  }            
+  var firstOrder = orderSectionMarketData?.Entry?.FirstOrDefault();
+  var firstPriceArray = firstOrder?.ListColumnCellLabel?.ToArray();
+  string firstPriceStr = firstPriceArray[2].Value.Substring(0, firstPriceArray[2].Value.Length - 4);
+  firstPriceStr = firstPriceStr.Replace(@",", "");
+  double firstPriceDbl = Convert.ToDouble(firstPriceStr);
+  
+  bool foundBadSort = false;
+  MemoryStruct.IListEntry[] buyOrders = orderSectionMarketData?.Entry?.ToArray();
+  for(int i = 1; i < buyOrders.Length; i++) {
+    MemoryStruct.MarketOrderEntry buyOrderInGame = (MemoryStruct.MarketOrderEntry)buyOrders[i];
+    string orderText = buyOrderInGame.LabelText.FirstOrDefault().Text.ToString();
+    string[] orderTextSplit = Regex.Split(orderText, @"<t>");
+    string orderPrice = orderTextSplit[2];
+    orderPrice = orderPrice.Replace(@"<right>", "").Replace(@",", "").Replace(@" ISK", "");
+    double dblOrderPrice = Convert.ToDouble(orderPrice);
+    if(firstPriceDbl < dblOrderPrice) {
+      foundBadSort = true;
+      break;
+    }
+  }
+  if(foundBadSort) {
+    Host.Log("Buy Price sorting incorrect.");
+  }
+
+  orderSectionMarketData = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.SelectedItemTypeDetails?.MarketData?.SellerView;
+  while (orderSectionMarketData == null) {
+    Host.Delay(500);
+    Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+    orderSectionMarketData = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.SelectedItemTypeDetails?.MarketData?.SellerView;
+  }
+  while (orderSectionMarketData?.Entry?.FirstOrDefault() == null) {
+    Host.Delay(500);
+    Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+    orderSectionMarketData = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.SelectedItemTypeDetails?.MarketData?.SellerView;
+  }            
+  var firstOrder = orderSectionMarketData?.Entry?.FirstOrDefault();
+  var firstPriceArray = firstOrder?.ListColumnCellLabel?.ToArray();
+  string firstPriceStr = firstPriceArray[2].Value.Substring(0, firstPriceArray[2].Value.Length - 4);
+  firstPriceStr = firstPriceStr.Replace(@",", "");
+  double firstPriceDbl = Convert.ToDouble(firstPriceStr);
+  
+  bool foundBadSort = false;
+  MemoryStruct.IListEntry[] sellOrders = orderSectionMarketData?.Entry?.ToArray();
+  for(int i = 1; i < sellOrders.Length; i++) {
+    MemoryStruct.MarketOrderEntry sellOrderInGame = (MemoryStruct.MarketOrderEntry)sellOrders[i];
+    string orderText = sellOrderInGame.LabelText.FirstOrDefault().Text.ToString();
+    string[] orderTextSplit = Regex.Split(orderText, @"<t>");
+    string orderPrice = orderTextSplit[2];
+    orderPrice = orderPrice.Replace(@"<right>", "").Replace(@",", "").Replace(@" ISK", "");
+    double dblOrderPrice = Convert.ToDouble(orderPrice);
+    if(firstPriceDbl > dblOrderPrice) {
+      foundBadSort = true;
+      break;
+    }
+  }
+  if(foundBadSort) {
+    Host.Log("Sell Price sorting incorrect.");
   }
 }
 
@@ -593,19 +580,17 @@ for (;;) {
   int loopCount = 1;
   foreach(FileOrderEntry fileOrderEntry in fileOrderEntries) {
     
-    //Check that the price column headers are set correctly otherwise blue price will be off screen
-    CheckPriceColumnHeader();
-
     //If five mins and 20s has passed since last update then process again
     bool timeToCheck = false;
     DateTime a = Convert.ToDateTime(@fileOrderEntry.UpdateTime);
     DateTime b = DateTime.Now;
     if (Math.Round(b.Subtract(a).TotalSeconds, 0)>300) {
       timeToCheck = true;
-      Host.Log("Time to check: " + fileOrderEntry.Name + " - " + fileOrderEntry.Type);
     }
 
     if (timeToCheck && !foundNew) {
+
+      Host.Log("Time to check: " + fileOrderEntry.Name + " - " + fileOrderEntry.Type);
 
       fileOrderEntry.OutOfPriceRange = false;
       //Ensure Market Window is open
@@ -762,6 +747,9 @@ for (;;) {
           Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
           Host.Delay(200);
         }
+
+        //Check that the price column headers are set correctly otherwise blue price will be off screen
+        CheckPriceColumnHeader();
 
         var orderSectionMarketData = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.SelectedItemTypeDetails?.MarketData?.BuyerView;
         if (fileOrderEntry.Type.Equals("Sell Order")) {

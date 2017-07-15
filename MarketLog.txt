@@ -1,5 +1,0 @@
-Medium Electrochemical Capacitor Booster I,Sell Order,__,249999.78,__,210460.51,__,0.00,__,07/12/2017 06:49:37,__,0,__,False
-Medium Command Processor I,Sell Order,__,869993.67,__,782994.3,__,0.00,__,07/12/2017 06:47:37,__,0,__,False
-Light Neutron Blaster I,Sell Order,__,29999.95,__,26999.96,__,0.00,__,07/12/2017 06:47:37,__,0,__,False
-Large Cargohold Optimization II,Sell Order,__,29499998.95,__,26549999.06,__,0.00,__,07/12/2017 06:47:37,__,0,__,False
-Limited Ocular Filter - Beta,Sell Order,__,3718694.7,__,3346825.23,__,0.00,__,07/12/2017 06:47:37,__,0,__,False
