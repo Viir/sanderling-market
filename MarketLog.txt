@@ -1,0 +1,17 @@
+Vigor Compact Micro Auxiliary Power Core,Sell Order,__,16000366.12,__,13800422.81,__,0.00,__,07/22/2017 08:10:35,__,0,__,False
+'Wetu' Mobile Depot,Sell Order,__,24799999.49,__,20850000.3,__,0.00,__,07/22/2017 08:04:49,__,0,__,False
+Shadow Serpentis Energized Adaptive Nano Membrane,Buy Order,__,12100318.45,__,0.00,__,15818606.24,__,07/22/2017 08:05:06,__,0,__,False
+Dark Blood Adaptive Nano Plating,Buy Order,__,4683977,__,0.00,__,7309899.36,__,07/22/2017 08:05:23,__,0,__,False
+Malfunctioning Thruster Sections,Buy Order,__,5500020.2,__,0.00,__,8499999.89,__,07/22/2017 08:05:41,__,0,__,False
+Tengu Offensive - Support Processor,Buy Order,__,39034363.05,__,0.00,__,53124999.99,__,07/22/2017 08:06:06,__,0,__,False
+Cerberus Exoplanets Hunter SKIN (Permanent),Buy Order,__,12000026.23,__,0.00,__,19549999.98,__,07/22/2017 08:06:25,__,0,__,False
+Polarized Light Neutron Blaster,Buy Order,__,5002031.96,__,0.00,__,7292999.99,__,07/22/2017 08:06:43,__,0,__,False
+True Sansha Adaptive Nano Plating,Buy Order,__,5751150.32,__,0.00,__,6629829.92,__,07/22/2017 08:07:27,__,0,__,False
+Small Mobile Siphon Unit,Buy Order,__,13700046.32,__,0.00,__,18686399.52,__,07/22/2017 08:07:44,__,0,__,False
+Dread Guristas Rapid Light Missile Launcher,Buy Order,__,35713800.01,__,0.00,__,42499999.57,__,07/22/2017 08:08:01,__,0,__,False
+Dread Guristas EM Ward Amplifier,Buy Order,__,4400167.66,__,0.00,__,6800111.34,__,07/22/2017 08:08:18,__,0,__,False
+Serpentis 3D Scanner Gamut,Sell Order,__,18002000.9,__,8052324.46,__,0.00,__,07/22/2017 08:08:41,__,0,__,False
+Loki Propulsion - Interdiction Nullifier,Sell Order,__,68879999.95,__,49574250.51,__,0.00,__,07/22/2016 08:02:30,__,0,__,False
+Gistum C-Type 10MN Afterburner,Sell Order,__,84899998.87,__,75150136.75,__,0.00,__,07/22/2016 08:02:36,__,0,__,False
+Structure Medical Center,Sell Order,__,88887999.6,__,40250083.01,__,0.00,__,07/22/2017 08:09:35,__,0,__,False
+Ship Maintenance Array,Sell Order,__,22999996.87,__,14950077.6,__,0.00,__,07/22/2017 08:09:57,__,0,__,False
