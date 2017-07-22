@@ -95,6 +95,7 @@ try {
             });
             Sanderling.KeyboardPress(VirtualKeyCode.DELETE);
             Sanderling.TextEntry(itemName);
+            Host.Delay(1000);
             Sanderling.MouseClickLeft(Measurement?.WindowRegionalMarket?.FirstOrDefault()?.ButtonText?.FirstOrDefault()?.RegionInteraction);
             Host.Delay(5000);
 
@@ -135,7 +136,7 @@ try {
             double newPrice = Convert.ToDouble(itemPrice);
             newPrice += 20;
             EnterPrice(newPrice);
-            Host.Delay(500);
+            Host.Delay(1500);
             Sanderling.MouseClickLeft(Measurement?.WindowMarketAction?.FirstOrDefault()?.InputText?.ElementAt(1).RegionInteraction);
             Host.Delay(500);
             Sanderling.MouseClickLeft(Measurement?.WindowMarketAction?.FirstOrDefault()?.InputText?.ElementAt(1).RegionInteraction);
@@ -162,7 +163,24 @@ try {
             
             FileOrderEntry newFileOrder = new FileOrderEntry(itemName, "Buy Order", newPrice, minPrice, maxPrice, defaultMargin, 0, 0.0, DateTime.Now, 0, false);
             fileOrderEntries.Add(newFileOrder);
-            
+
+            System.IO.File.Copy(inputFileName, inputFileName + ".bak", true);
+            using(FileStream fileStream2 = new FileStream(inputFileName, FileMode.Create, FileAccess.ReadWrite)) {
+              using(var writer = new StreamWriter(fileStream2)) {
+                List<FileOrderEntry>SortedList = fileOrderEntries.OrderByDescending(o=>o.NotFound).ThenByDescending(o=>o.OutOfPriceRange).ToList();
+                foreach(FileOrderEntry fileOrderEntryToWrite in SortedList) {
+                  string minPrice2 = "0.00";
+                  string maxPrice2 = "0.00";
+                  if (fileOrderEntryToWrite.Type.Equals("Sell Order")) {
+                    minPrice2 = fileOrderEntryToWrite.LowestPrice.ToString();
+                  } else {
+                    maxPrice2 = fileOrderEntryToWrite.HighestPrice.ToString();
+                  }
+                  string output = fileOrderEntryToWrite.Name.ToString() + "," + fileOrderEntryToWrite.Type.ToString() + "," + "__" + "," + fileOrderEntryToWrite.StartPrice.ToString() + "," + "__" + "," + minPrice2 + "," + "__" + "," + maxPrice2 + "," + "__" + "," + fileOrderEntryToWrite.UpdateTime.ToString() + "," + "__" + "," + fileOrderEntryToWrite.NotFound.ToString() + "," + "__" + "," + fileOrderEntryToWrite.OutOfPriceRange.ToString();
+                  writer.WriteLine(output);
+                }
+              }
+            }
           }
         }
       }
@@ -365,13 +383,13 @@ void CheckPriceColumnHeader() {
     Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
     orderSectionMarketData = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.SelectedItemTypeDetails?.MarketData?.SellerView;
   }            
-  var firstOrder = orderSectionMarketData?.Entry?.FirstOrDefault();
-  var firstPriceArray = firstOrder?.ListColumnCellLabel?.ToArray();
-  string firstPriceStr = firstPriceArray[2].Value.Substring(0, firstPriceArray[2].Value.Length - 4);
+  firstOrder = orderSectionMarketData?.Entry?.FirstOrDefault();
+  firstPriceArray = firstOrder?.ListColumnCellLabel?.ToArray();
+  firstPriceStr = firstPriceArray[2].Value.Substring(0, firstPriceArray[2].Value.Length - 4);
   firstPriceStr = firstPriceStr.Replace(@",", "");
-  double firstPriceDbl = Convert.ToDouble(firstPriceStr);
+  firstPriceDbl = Convert.ToDouble(firstPriceStr);
   
-  bool foundBadSort = false;
+  foundBadSort = false;
   MemoryStruct.IListEntry[] sellOrders = orderSectionMarketData?.Entry?.ToArray();
   for(int i = 1; i < sellOrders.Length; i++) {
     MemoryStruct.MarketOrderEntry sellOrderInGame = (MemoryStruct.MarketOrderEntry)sellOrders[i];
@@ -564,6 +582,24 @@ for (;;) {
             Host.Log("Name: " + newFileOrder.Name + "  Price: " + newFileOrder.StartPrice + "  Type: " + newFileOrder.Type + "  Min Price: " + newFileOrder.LowestPrice);
             //Host.Break();
             foundNew = true;
+
+            System.IO.File.Copy(inputFileName, inputFileName + ".bak", true);
+            using(FileStream fileStream = new FileStream(inputFileName, FileMode.Create, FileAccess.ReadWrite)) {
+              using(var writer = new StreamWriter(fileStream)) {
+              List<FileOrderEntry>SortedList = fileOrderEntries.OrderByDescending(o=>o.NotFound).ThenByDescending(o=>o.OutOfPriceRange).ToList();
+                foreach(FileOrderEntry fileOrderEntryToWrite in SortedList) {
+                  string writeMinPrice = "0.00";
+                  string writeMaxPrice = "0.00";
+                  if (fileOrderEntryToWrite.Type.Equals("Sell Order")) {
+                    writeMinPrice = fileOrderEntryToWrite.LowestPrice.ToString();
+                  } else {
+                    writeMaxPrice = fileOrderEntryToWrite.HighestPrice.ToString();
+                  }
+                  string output = fileOrderEntryToWrite.Name.ToString() + "," + fileOrderEntryToWrite.Type.ToString() + "," + "__" + "," + fileOrderEntryToWrite.StartPrice.ToString() + "," + "__" + "," + writeMinPrice + "," + "__" + "," + writeMaxPrice + "," + "__" + "," + fileOrderEntryToWrite.UpdateTime.ToString() + "," + "__" + "," + fileOrderEntryToWrite.NotFound.ToString() + "," + "__" + "," + fileOrderEntryToWrite.OutOfPriceRange.ToString();
+                  writer.WriteLine(output);
+                }
+              }
+            }
             
             //Something is going wrong when there are more than one new selling item.
             goto foundNewLoopBack;
