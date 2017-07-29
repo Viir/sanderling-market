@@ -122,7 +122,12 @@ try {
                 break;
               }
             }
-            Host.Delay(5000);
+            var quantity = Measurement?.WindowMarketAction?.FirstOrDefault()?.InputText?.ElementAt(1)?.Text;
+            while(!quantity.Equals("1")) {
+              Host.Delay(500);
+              Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+              quantity = Measurement?.WindowMarketAction?.FirstOrDefault()?.InputText?.ElementAt(1)?.Text;            
+            }
             Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
             Sanderling.MouseClickLeft(Measurement?.WindowMarketAction?.FirstOrDefault()?.InputText?.ElementAt(0).RegionInteraction);
             Host.Delay(500);
