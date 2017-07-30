@@ -123,7 +123,12 @@ try {
               }
             }
             var quantity = Measurement?.WindowMarketAction?.FirstOrDefault()?.InputText?.ElementAt(1)?.Text;
-            while(!quantity.Equals("1")) {
+            while(quantity == null) {
+              Host.Delay(500);
+              Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+              quantity = Measurement?.WindowMarketAction?.FirstOrDefault()?.InputText?.ElementAt(1)?.Text;            
+            }
+            while(!quantity.ToString().Equals("1")) {
               Host.Delay(500);
               Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
               quantity = Measurement?.WindowMarketAction?.FirstOrDefault()?.InputText?.ElementAt(1)?.Text;            
