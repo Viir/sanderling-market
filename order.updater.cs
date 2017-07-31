@@ -338,14 +338,26 @@ void CloseModalUIElementYes() {
   var ButtonClose = ModalUIElement?.ButtonText?.FirstOrDefault(button=>(button?.Text).RegexMatchSuccessIgnoreCase("yes"));
 
   Sanderling.MouseClickLeft(ButtonClose);
-  Host.Delay(500);
+  int somethingWrong = 0;
+  while(ModalUIElement != null) {
+    Host.Delay(100);
+    if(somethingWrong++ == 20) {
+      break;
+    }
+  }
 }
 
 void CloseModalUIElement() {
   var ButtonClose = ModalUIElement?.ButtonText?.FirstOrDefault(button=>(button?.Text).RegexMatchSuccessIgnoreCase("close|no|ok"));
 
   Sanderling.MouseClickLeft(ButtonClose);
-    Host.Delay(500);
+  int somethingWrong = 0;
+  while(ModalUIElement != null) {
+    Host.Delay(100);
+    if(somethingWrong++ == 20) {
+      break;
+    }
+  }
 }
 
 void CheckPriceColumnHeader() {
