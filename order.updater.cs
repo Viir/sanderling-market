@@ -338,12 +338,14 @@ void CloseModalUIElementYes() {
   var ButtonClose = ModalUIElement?.ButtonText?.FirstOrDefault(button=>(button?.Text).RegexMatchSuccessIgnoreCase("yes"));
 
   Sanderling.MouseClickLeft(ButtonClose);
+  Host.Delay(500);
 }
 
 void CloseModalUIElement() {
   var ButtonClose = ModalUIElement?.ButtonText?.FirstOrDefault(button=>(button?.Text).RegexMatchSuccessIgnoreCase("close|no|ok"));
 
   Sanderling.MouseClickLeft(ButtonClose);
+    Host.Delay(500);
 }
 
 void CheckPriceColumnHeader() {
