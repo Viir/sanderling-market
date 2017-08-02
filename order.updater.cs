@@ -361,6 +361,7 @@ void CloseModalUIElement() {
 }
 
 void CheckPriceColumnHeader() {
+try {
   var orderSectionMarketData = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.SelectedItemTypeDetails?.MarketData?.BuyerView;
   while (orderSectionMarketData == null) {
     Host.Delay(500);
@@ -430,6 +431,7 @@ void CheckPriceColumnHeader() {
   if(foundBadSort) {
     Host.Log("Sell Price sorting incorrect.");
   }
+} catch {}  
 }
 
 foundNewLoopBack:
