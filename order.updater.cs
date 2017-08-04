@@ -363,13 +363,21 @@ void CloseModalUIElement() {
 void CheckPriceColumnHeader() {
 try {
   var orderSectionMarketData = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.SelectedItemTypeDetails?.MarketData?.BuyerView;
+  int retryCount = 0;
   while (orderSectionMarketData == null) {
     Host.Delay(500);
+    if (retryCount++>20) {
+      goto somethingWrong;
+    }
     Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
     orderSectionMarketData = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.SelectedItemTypeDetails?.MarketData?.BuyerView;
   }
+  retryCount = 0;
   while (orderSectionMarketData?.Entry?.FirstOrDefault() == null) {
     Host.Delay(500);
+    if (retryCount++>20) {
+      goto somethingWrong;
+    }
     Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
     orderSectionMarketData = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.SelectedItemTypeDetails?.MarketData?.BuyerView;
   }            
@@ -395,16 +403,25 @@ try {
   }
   if(foundBadSort) {
     Host.Log("Buy Price sorting incorrect.");
+    Sanderling.MouseClickLeft(Measurement?.WindowRegionalMarket?.FirstOrDefault()?.SelectedItemTypeDetails?.MarketData?.BuyerView.ColumnHeader[2].RegionInteraction);
   }
 
   orderSectionMarketData = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.SelectedItemTypeDetails?.MarketData?.SellerView;
+  retryCount = 0;
   while (orderSectionMarketData == null) {
     Host.Delay(500);
+    if (retryCount++>20) {
+      goto somethingWrong;
+    }
     Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
     orderSectionMarketData = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.SelectedItemTypeDetails?.MarketData?.SellerView;
   }
+  retryCount = 0;
   while (orderSectionMarketData?.Entry?.FirstOrDefault() == null) {
     Host.Delay(500);
+    if (retryCount++>20) {
+      goto somethingWrong;
+    }
     Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
     orderSectionMarketData = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.SelectedItemTypeDetails?.MarketData?.SellerView;
   }            
@@ -430,7 +447,10 @@ try {
   }
   if(foundBadSort) {
     Host.Log("Sell Price sorting incorrect.");
+    Sanderling.MouseClickLeft(Measurement?.WindowRegionalMarket?.FirstOrDefault()?.SelectedItemTypeDetails?.MarketData?.SellerView.ColumnHeader[2].RegionInteraction);
   }
+somethingWrong:
+Host.Log("Col check err");
 } catch {}  
 }
 
@@ -812,7 +832,9 @@ for (;;) {
 
         //Check that the price column headers are set correctly otherwise blue price will be off screen
         CheckPriceColumnHeader();
-
+        CheckPriceColumnHeader();
+	  Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+	
         var orderSectionMarketData = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.SelectedItemTypeDetails?.MarketData?.BuyerView;
         if (fileOrderEntry.Type.Equals("Sell Order")) {
           orderSectionMarketData = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.SelectedItemTypeDetails?.MarketData?.SellerView;
