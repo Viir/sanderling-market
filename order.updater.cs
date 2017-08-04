@@ -367,7 +367,7 @@ try {
   while (orderSectionMarketData == null) {
     Host.Delay(500);
     if (retryCount++>20) {
-      goto somethingWrong;
+      return;
     }
     Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
     orderSectionMarketData = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.SelectedItemTypeDetails?.MarketData?.BuyerView;
@@ -376,7 +376,7 @@ try {
   while (orderSectionMarketData?.Entry?.FirstOrDefault() == null) {
     Host.Delay(500);
     if (retryCount++>20) {
-      goto somethingWrong;
+      return;
     }
     Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
     orderSectionMarketData = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.SelectedItemTypeDetails?.MarketData?.BuyerView;
@@ -411,7 +411,7 @@ try {
   while (orderSectionMarketData == null) {
     Host.Delay(500);
     if (retryCount++>20) {
-      goto somethingWrong;
+      return;
     }
     Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
     orderSectionMarketData = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.SelectedItemTypeDetails?.MarketData?.SellerView;
@@ -420,7 +420,7 @@ try {
   while (orderSectionMarketData?.Entry?.FirstOrDefault() == null) {
     Host.Delay(500);
     if (retryCount++>20) {
-      goto somethingWrong;
+      return;
     }
     Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
     orderSectionMarketData = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.SelectedItemTypeDetails?.MarketData?.SellerView;
@@ -449,8 +449,6 @@ try {
     Host.Log("Sell Price sorting incorrect.");
     Sanderling.MouseClickLeft(Measurement?.WindowRegionalMarket?.FirstOrDefault()?.SelectedItemTypeDetails?.MarketData?.SellerView.ColumnHeader[2].RegionInteraction);
   }
-somethingWrong:
-Host.Log("Col check err");
 } catch {}  
 }
 
