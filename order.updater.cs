@@ -830,8 +830,9 @@ for (;;) {
 
         //Check that the price column headers are set correctly otherwise blue price will be off screen
         CheckPriceColumnHeader();
+        Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
         CheckPriceColumnHeader();
-	  Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+        Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
 	
         var orderSectionMarketData = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.SelectedItemTypeDetails?.MarketData?.BuyerView;
         if (fileOrderEntry.Type.Equals("Sell Order")) {
