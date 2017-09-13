@@ -483,6 +483,9 @@ for (;;) {
 
       //Calculate how much ISK is invested
       double totalInvested = 0.0;
+      double buyInvestment = 0.0;
+      double sellInvestment = 0.0;
+      
       if (buyOrderCountInGame>0) {
         foreach(MemoryStruct.MarketOrderEntry buyOrderInGame in buyOrdersInGame) {
           string orderText = buyOrderInGame.LabelText.FirstOrDefault().Text.ToString();
@@ -492,6 +495,7 @@ for (;;) {
           string totalToBuy = Regex.Split(orderQuantities, @"/")[1].Replace(@"<right>", "").Replace(@",", "").Replace(@" ISK", "");
           orderPrice = orderPrice.Replace(@"<right>", "").Replace(@",", "").Replace(@" ISK", "");
           totalInvested += (Convert.ToInt32(totalToBuy) * Convert.ToDouble(orderPrice)) * 1.1;
+          buyInvestment += (Convert.ToInt32(totalToBuy) * Convert.ToDouble(orderPrice));
         }
       }
       if (sellOrderCountInGame>0) {
@@ -504,9 +508,10 @@ for (;;) {
           totalToSell = totalToSell.Replace(@"<right>", "").Replace(@",", "").Replace(@" ISK", "");
           orderPrice = orderPrice.Replace(@"<right>", "").Replace(@",", "").Replace(@" ISK", "");
           totalInvested += (Convert.ToInt32(totalToSell) * Convert.ToDouble(orderPrice));
+          sellInvestment += (Convert.ToInt32(totalToSell) * Convert.ToDouble(orderPrice));
         }
       }
-      Host.Log(@String.Format("Total Invested = {0:N}", totalInvested));
+      Host.Log(@String.Format("T-{0:N}   B-{1:N}   S-{2:N}", totalInvested, buyInvestment, sellInvestment));
 
       if (buyOrderCountInGame>0) {
         foreach(MemoryStruct.MarketOrderEntry buyOrderInGame in buyOrdersInGame) {
