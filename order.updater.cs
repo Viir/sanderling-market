@@ -117,6 +117,13 @@ try {
             Host.Delay(5000);
             Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
             foreach(var button in Measurement?.WindowRegionalMarket?.FirstOrDefault()?.ButtonText) {
+              if (button.Text.Equals("Export to File")) {
+                Sanderling.MouseClickLeft(button.RegionInteraction);
+                break;
+              }
+            }
+            Host.Delay(1000);
+            foreach(var button in Measurement?.WindowRegionalMarket?.FirstOrDefault()?.ButtonText) {
               if (button.Text.Equals("Place Buy Order")) {
                 Sanderling.MouseClickLeft(button.RegionInteraction);
                 break;
@@ -841,6 +848,14 @@ for (;;) {
         CheckPriceColumnHeader();
         Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
 	
+        foreach(var button in Measurement?.WindowRegionalMarket?.FirstOrDefault()?.ButtonText) {
+          if (button.Text.Equals("Export to File")) {
+            Sanderling.MouseClickLeft(button.RegionInteraction);
+            break;
+          }
+        }
+        Host.Delay(1000);
+
         var orderSectionMarketData = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.SelectedItemTypeDetails?.MarketData?.BuyerView;
         if (fileOrderEntry.Type.Equals("Sell Order")) {
           orderSectionMarketData = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.SelectedItemTypeDetails?.MarketData?.SellerView;
