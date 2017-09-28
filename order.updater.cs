@@ -28,6 +28,7 @@ bool foundNew = false;
 //Allow me time to move the mouse after starting app.
 Host.Delay(5000);
 
+//Read MarketLog
 using(FileStream fileStream = new FileStream(inputFileName, FileMode.OpenOrCreate, FileAccess.ReadWrite)) {
   using(var reader = new StreamReader(fileStream)) {
     while (!reader.EndOfStream) {
@@ -48,6 +49,7 @@ using(FileStream fileStream = new FileStream(inputFileName, FileMode.OpenOrCreat
   }
 }
 
+//Read MarketOrders and buy anything there
 try {
   using(FileStream fileStream = new FileStream(orderFileName, FileMode.Open, FileAccess.Read)) {
     using(var reader = new StreamReader(fileStream)) {
@@ -672,6 +674,10 @@ for (;;) {
   Something_has_gone_wrong: //label to jump back to if something goes wrong
   int totalOrders = fileOrderEntries.Count;
   int loopCount = 1;
+  
+  //Sort to oldest first
+  fileOrderEntries = fileOrderEntries.OrderBy(o=>o.UpdateTime);
+  
   foreach(FileOrderEntry fileOrderEntry in fileOrderEntries) {
     
     //If five mins and 20s has passed since last update then process again
