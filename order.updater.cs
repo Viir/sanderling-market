@@ -676,7 +676,8 @@ for (;;) {
   int loopCount = 1;
   
   //Sort to oldest first
-  fileOrderEntries = fileOrderEntries.OrderBy(o=>o.UpdateTime).ToList();
+  //fileOrderEntries = fileOrderEntries.OrderBy(o=>o.UpdateTime).ToList();
+  fileOrderEntries = fileOrderEntries.OrderByDescending(o=>o.Type).ThenBy(o=>o.UpdateTime).ToList();
   
   foreach(FileOrderEntry fileOrderEntry in fileOrderEntries) {
     
