@@ -152,10 +152,11 @@ try {
               VirtualKeyCode.VK_A
             });
             Sanderling.KeyboardPress(VirtualKeyCode.DELETE);
-            double newPrice = Convert.ToDouble(itemPrice);
+            long newPriceLong = Convert.ToInt64(itemPrice);	//Convert to long to remove decimal place as it causes problems?
+            double newPrice = Convert.ToDouble(newPriceLong);
             newPrice += 20;
             EnterPrice(newPrice);
-            Host.Delay(1500);
+            Host.Delay(500);
             Sanderling.MouseClickLeft(Measurement?.WindowMarketAction?.FirstOrDefault()?.InputText?.ElementAt(1).RegionInteraction);
             Host.Delay(500);
             Sanderling.MouseClickLeft(Measurement?.WindowMarketAction?.FirstOrDefault()?.InputText?.ElementAt(1).RegionInteraction);
@@ -165,6 +166,7 @@ try {
               VirtualKeyCode.VK_A
             });
             Sanderling.KeyboardPress(VirtualKeyCode.DELETE);
+            Host.Delay(500);
             Sanderling.TextEntry(itemQuantity);
             Host.Delay(1000);
             Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
@@ -205,7 +207,11 @@ try {
       }
     }
   }
-} catch {}
+} catch (Exception ex)
+{
+	Host.Log("Check there's not another buy window open");
+	Host.Log(ex.ToString());
+}
 
 //clear the file
 try {
@@ -337,9 +343,12 @@ void EnterPrice(double price) {
   var portionInteger = (long) price;
   var cent = ((long)(price * 100)) % 100;
   Sanderling.TextEntry(portionInteger.ToString());
+  Host.Delay(500);
   if (0<cent) {
     Sanderling.KeyboardPress(VirtualKeyCode.DECIMAL); // use OEM_COMMA if your locale setting has comma as decimal separator.
+    Host.Delay(500);
     Sanderling.TextEntry(cent.ToString("D2"));
+    Host.Delay(500);
   }
 }
 
@@ -1102,6 +1111,10 @@ for (;;) {
                 }
               } else {
                 //Host.Log("No change needed for " + orderName + " - " + fileOrderEntry.Type);
+                Host.Log("Price mismatch");                
+                var ButtonCancel = Measurement?.WindowMarketAction?.FirstOrDefault()?.ButtonText?.FirstOrDefault(button=>(button?.Text).RegexMatchSuccessIgnoreCase("cancel"));
+                Sanderling.MouseClickLeft(ButtonCancel);
+                Host.Delay(2000);
               }
             } catch {
               goto Something_has_gone_wrong;
@@ -1336,6 +1349,10 @@ for (;;) {
                 }
               } else {
                 //Host.Log("No change needed for " + orderName + " - " + fileOrderEntry.Type);
+                  Host.Log("Price mismatch");                
+                  var ButtonCancel = Measurement?.WindowMarketAction?.FirstOrDefault()?.ButtonText?.FirstOrDefault(button=>(button?.Text).RegexMatchSuccessIgnoreCase("cancel"));
+                  Sanderling.MouseClickLeft(ButtonCancel);
+                  Host.Delay(2000);
               }
             } catch {
               goto Something_has_gone_wrong;
