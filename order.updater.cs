@@ -152,11 +152,11 @@ try {
               VirtualKeyCode.VK_A
             });
             Sanderling.KeyboardPress(VirtualKeyCode.DELETE);
-            long newPriceLong = Convert.ToInt64(itemPrice);	//Convert to long to remove decimal place as it causes problems?
-            double newPrice = Convert.ToDouble(newPriceLong);
+            double newPrice = Convert.ToDouble(itemPrice);
             newPrice += 20;
             EnterPrice(newPrice);
             Host.Delay(500);
+            
             Sanderling.MouseClickLeft(Measurement?.WindowMarketAction?.FirstOrDefault()?.InputText?.ElementAt(1).RegionInteraction);
             Host.Delay(500);
             Sanderling.MouseClickLeft(Measurement?.WindowMarketAction?.FirstOrDefault()?.InputText?.ElementAt(1).RegionInteraction);
@@ -169,6 +169,7 @@ try {
             Host.Delay(500);
             Sanderling.TextEntry(itemQuantity);
             Host.Delay(1000);
+            
             Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
             var ButtonOK = Measurement?.WindowMarketAction?.FirstOrDefault()?.ButtonText?.FirstOrDefault(button=>(button?.Text).RegexMatchSuccessIgnoreCase("buy"));
             Sanderling.MouseClickLeft(ButtonOK);
@@ -1108,13 +1109,14 @@ for (;;) {
                   fileOrderEntry.NumOfPriceChanges = fileOrderEntry.NumOfPriceChanges + 1;
                   fileOrderEntry.UpdateTime = DateTime.Now;
                   fileOrderEntry.PriceChangeTotalCost = fileOrderEntry.PriceChangeTotalCost + priceChangeDbl + brokerFeeDbl;
+                } else {
+                  Host.Log("Price mismatch");                
+                  var ButtonCancel = Measurement?.WindowMarketAction?.FirstOrDefault()?.ButtonText?.FirstOrDefault(button=>(button?.Text).RegexMatchSuccessIgnoreCase("cancel"));
+                  Sanderling.MouseClickLeft(ButtonCancel);
+                  Host.Delay(2000);
                 }
               } else {
                 //Host.Log("No change needed for " + orderName + " - " + fileOrderEntry.Type);
-                Host.Log("Price mismatch");                
-                var ButtonCancel = Measurement?.WindowMarketAction?.FirstOrDefault()?.ButtonText?.FirstOrDefault(button=>(button?.Text).RegexMatchSuccessIgnoreCase("cancel"));
-                Sanderling.MouseClickLeft(ButtonCancel);
-                Host.Delay(2000);
               }
             } catch {
               goto Something_has_gone_wrong;
@@ -1346,13 +1348,14 @@ for (;;) {
                   fileOrderEntry.NumOfPriceChanges = fileOrderEntry.NumOfPriceChanges + 1;
                   fileOrderEntry.UpdateTime = DateTime.Now;
                   fileOrderEntry.PriceChangeTotalCost = fileOrderEntry.PriceChangeTotalCost + priceChangeDbl + brokerFeeDbl;
-                }
-              } else {
-                //Host.Log("No change needed for " + orderName + " - " + fileOrderEntry.Type);
+                } else {
                   Host.Log("Price mismatch");                
                   var ButtonCancel = Measurement?.WindowMarketAction?.FirstOrDefault()?.ButtonText?.FirstOrDefault(button=>(button?.Text).RegexMatchSuccessIgnoreCase("cancel"));
                   Sanderling.MouseClickLeft(ButtonCancel);
                   Host.Delay(2000);
+                }
+              } else {
+                //Host.Log("No change needed for " + orderName + " - " + fileOrderEntry.Type);
               }
             } catch {
               goto Something_has_gone_wrong;
