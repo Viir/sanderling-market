@@ -4,8 +4,8 @@ using Parse = Sanderling.Parse;
 using MemoryStruct = Sanderling.Interface.MemoryStruct;
 using System.IO;
 
-//TODO:
-//TODO:
+//TODO: Add the date of the first buy/sell to the MarketLog.txt file so I can tell how old the order is
+//TODO: Add 20/10/2017 to all the blank existing entries.
 //Host.Break(); // Halts execution until user continues
 
 //WARNING WARNING WARNING - Filter must be set to station only
