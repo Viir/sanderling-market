@@ -39,7 +39,7 @@ using(FileStream fileStream = new FileStream(inputFileName, FileMode.OpenOrCreat
           double minPrice = CalcMinPrice(Convert.ToDouble(values[3]), Convert.ToDouble(values[5]), defaultMargin);
           double maxPrice = CalcMaxPrice(Convert.ToDouble(values[3]), Convert.ToDouble(values[7]), defaultMargin);
 
-          FileOrderEntry newFileOrder = new FileOrderEntry(values[0].ToString(), values[1].ToString(), Convert.ToDouble(values[3]), minPrice, maxPrice, defaultMargin, 0, 0.00, Convert.ToDateTime(values[9]), Convert.ToInt32(values[11]), Convert.ToBoolean(values[13]));
+          FileOrderEntry newFileOrder = new FileOrderEntry(values[0].ToString(), values[1].ToString(), Convert.ToDouble(values[3]), minPrice, maxPrice, defaultMargin, 0, 0.00, Convert.ToDateTime(values[9]), Convert.ToDateTime(values[11]), Convert.ToInt32(values[13]), Convert.ToBoolean(values[15]));
           fileOrderEntries.Add(newFileOrder);
         }
       } catch {
@@ -183,7 +183,7 @@ try {
             double minPrice = 0.0;
             double maxPrice = CalcMinPrice(Convert.ToDouble(itemSellPrice), 0.0, defaultMargin);
             
-            FileOrderEntry newFileOrder = new FileOrderEntry(itemName, "Buy Order", newPrice, minPrice, maxPrice, defaultMargin, 0, 0.0, DateTime.Now, 0, false);
+            FileOrderEntry newFileOrder = new FileOrderEntry(itemName, "Buy Order", newPrice, minPrice, maxPrice, defaultMargin, 0, 0.0, DateTime.Now, DateTime.Now, 0, false);
             fileOrderEntries.Add(newFileOrder);
 
             System.IO.File.Copy(inputFileName, inputFileName + ".bak", true);
@@ -198,7 +198,7 @@ try {
                   } else {
                     maxPrice2 = fileOrderEntryToWrite.HighestPrice.ToString();
                   }
-                  string output = fileOrderEntryToWrite.Name.ToString() + "," + fileOrderEntryToWrite.Type.ToString() + "," + "__" + "," + fileOrderEntryToWrite.StartPrice.ToString() + "," + "__" + "," + minPrice2 + "," + "__" + "," + maxPrice2 + "," + "__" + "," + fileOrderEntryToWrite.UpdateTime.ToString() + "," + "__" + "," + fileOrderEntryToWrite.NotFound.ToString() + "," + "__" + "," + fileOrderEntryToWrite.OutOfPriceRange.ToString();
+                  string output = fileOrderEntryToWrite.Name.ToString() + "," + fileOrderEntryToWrite.Type.ToString() + "," + "__" + "," + fileOrderEntryToWrite.StartPrice.ToString() + "," + "__" + "," + minPrice2 + "," + "__" + "," + maxPrice2 + "," + "__" + "," + fileOrderEntryToWrite.UpdateTime.ToString() + "," + "__" + "," + fileOrderEntryToWrite.PurchaseTime.ToString() + "," + "__" + "," + fileOrderEntryToWrite.NotFound.ToString() + "," + "__" + "," + fileOrderEntryToWrite.OutOfPriceRange.ToString();
                   writer.WriteLine(output);
                 }
               }
@@ -256,6 +256,10 @@ public class FileOrderEntry {
     get;
     set;
   }
+  public DateTime PurchaseTime {
+    get;
+    set;
+  }
   public int NotFound {
     get;
     set;
@@ -265,7 +269,7 @@ public class FileOrderEntry {
     set;
   }
 
-  public FileOrderEntry(string name, string type, double startPrice, double lowestPrice, double highestPrice, double margin, int numOfPriceChanges, double priceChangeTotalCost, DateTime updateTime, int notFound, bool outOfPriceRange) {
+  public FileOrderEntry(string name, string type, double startPrice, double lowestPrice, double highestPrice, double margin, int numOfPriceChanges, double priceChangeTotalCost, DateTime updateTime, DateTime purchaseTime, int notFound, bool outOfPriceRange) {
     Name = name;
     Type = type;
     StartPrice = startPrice;
@@ -275,6 +279,7 @@ public class FileOrderEntry {
     NumOfPriceChanges = numOfPriceChanges;
     PriceChangeTotalCost = priceChangeTotalCost;
     UpdateTime = updateTime;
+    PurchaseTime = purchaseTime;
     NotFound = notFound;
     OutOfPriceRange = outOfPriceRange;
   }
@@ -560,7 +565,7 @@ for (;;) {
             double minPrice = CalcMinPrice(orderPriceDbl, 0.0, defaultMargin);
             double maxPrice = CalcMaxPrice(orderPriceDbl, 0.0, defaultMargin);
               
-            FileOrderEntry newFileOrder = new FileOrderEntry(gameOrderName, "Buy Order", orderPriceDbl, minPrice, maxPrice, defaultMargin, 0, 0.0, DateTime.Now, 0, false);
+            FileOrderEntry newFileOrder = new FileOrderEntry(gameOrderName, "Buy Order", orderPriceDbl, minPrice, maxPrice, defaultMargin, 0, 0.0, DateTime.Now, DateTime.Now, 0, false);
             fileOrderEntries.Add(newFileOrder);
 
             //Print details for checking and pause.
@@ -645,7 +650,7 @@ for (;;) {
             //{
                // useMinPrice = minPrice;
             //}              
-            FileOrderEntry newFileOrder = new FileOrderEntry(gameOrderName, "Sell Order", orderPriceDbl, useMinPrice, maxPrice, defaultMargin, 0, 0.0, DateTime.Now, 0, false);
+            FileOrderEntry newFileOrder = new FileOrderEntry(gameOrderName, "Sell Order", orderPriceDbl, useMinPrice, maxPrice, defaultMargin, 0, 0.0, DateTime.Now, DateTime.Now, 0, false);
             fileOrderEntries.Add(newFileOrder);
 
             //Print details for checking and pause.
@@ -665,7 +670,7 @@ for (;;) {
                   } else {
                     writeMaxPrice = fileOrderEntryToWrite.HighestPrice.ToString();
                   }
-                  string output = fileOrderEntryToWrite.Name.ToString() + "," + fileOrderEntryToWrite.Type.ToString() + "," + "__" + "," + fileOrderEntryToWrite.StartPrice.ToString() + "," + "__" + "," + writeMinPrice + "," + "__" + "," + writeMaxPrice + "," + "__" + "," + fileOrderEntryToWrite.UpdateTime.ToString() + "," + "__" + "," + fileOrderEntryToWrite.NotFound.ToString() + "," + "__" + "," + fileOrderEntryToWrite.OutOfPriceRange.ToString();
+                  string output = fileOrderEntryToWrite.Name.ToString() + "," + fileOrderEntryToWrite.Type.ToString() + "," + "__" + "," + fileOrderEntryToWrite.StartPrice.ToString() + "," + "__" + "," + writeMinPrice + "," + "__" + "," + writeMaxPrice + "," + "__" + "," + fileOrderEntryToWrite.UpdateTime.ToString() + "," + "__" + "," + fileOrderEntryToWrite.PurchaseTime.ToString() + "," + "__" + "," + fileOrderEntryToWrite.NotFound.ToString() + "," + "__" + "," + fileOrderEntryToWrite.OutOfPriceRange.ToString();
                   writer.WriteLine(output);
                 }
               }
@@ -1385,7 +1390,7 @@ for (;;) {
             } else {
               maxPrice = fileOrderEntryToWrite.HighestPrice.ToString();
             }
-            string output = fileOrderEntryToWrite.Name.ToString() + "," + fileOrderEntryToWrite.Type.ToString() + "," + "__" + "," + fileOrderEntryToWrite.StartPrice.ToString() + "," + "__" + "," + minPrice + "," + "__" + "," + maxPrice + "," + "__" + "," + fileOrderEntryToWrite.UpdateTime.ToString() + "," + "__" + "," + fileOrderEntryToWrite.NotFound.ToString() + "," + "__" + "," + fileOrderEntryToWrite.OutOfPriceRange.ToString();
+            string output = fileOrderEntryToWrite.Name.ToString() + "," + fileOrderEntryToWrite.Type.ToString() + "," + "__" + "," + fileOrderEntryToWrite.StartPrice.ToString() + "," + "__" + "," + minPrice + "," + "__" + "," + maxPrice + "," + "__" + "," + fileOrderEntryToWrite.UpdateTime.ToString() + "," + "__" + "," + fileOrderEntryToWrite.PurchaseTime.ToString() + "," + "__" + "," + fileOrderEntryToWrite.NotFound.ToString() + "," + "__" + "," + fileOrderEntryToWrite.OutOfPriceRange.ToString();
             writer.WriteLine(output);
           }
         }
@@ -1410,7 +1415,7 @@ for (;;) {
           } else {
             maxPrice = fileOrderEntryToWrite.HighestPrice.ToString();
           }
-          string output = fileOrderEntryToWrite.Name.ToString() + "," + fileOrderEntryToWrite.Type.ToString() + "," + "__" + "," + fileOrderEntryToWrite.StartPrice.ToString() + "," + "__" + "," + minPrice + "," + "__" + "," + maxPrice + "," + "__" + "," + fileOrderEntryToWrite.UpdateTime.ToString() + "," + "__" + "," + fileOrderEntryToWrite.NotFound.ToString() + "," + "__" + "," + fileOrderEntryToWrite.OutOfPriceRange.ToString();
+          string output = fileOrderEntryToWrite.Name.ToString() + "," + fileOrderEntryToWrite.Type.ToString() + "," + "__" + "," + fileOrderEntryToWrite.StartPrice.ToString() + "," + "__" + "," + minPrice + "," + "__" + "," + maxPrice + "," + "__" + "," + fileOrderEntryToWrite.UpdateTime.ToString() + "," + "__" + "," + fileOrderEntryToWrite.PurchaseTime.ToString() + "," + "__" + "," + fileOrderEntryToWrite.NotFound.ToString() + "," + "__" + "," + fileOrderEntryToWrite.OutOfPriceRange.ToString();
           writer.WriteLine(output);
         }
       }
