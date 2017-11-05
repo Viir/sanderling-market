@@ -704,7 +704,7 @@ for (;;) {
       timeToCheck = true;
     }
 
-    if (timeToCheck && !foundNew) {
+    if (timeToCheck && !foundNew && fileOrderEntry.NotFound < 10) {
 
       Host.Log("Time to check: " + fileOrderEntry.Name + " - " + fileOrderEntry.Type);
 
