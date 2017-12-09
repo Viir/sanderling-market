@@ -520,8 +520,8 @@ for (;;) {
           string totalToBuy = Regex.Split(orderQuantities, @"/")[0];
           totalToBuy = totalToBuy.Replace(@"<right>", "").Replace(@",", "").Replace(@" ISK", "");
           orderPrice = orderPrice.Replace(@"<right>", "").Replace(@",", "").Replace(@" ISK", "");
-          totalInvested += Convert.ToInt32(amountBought) * Convert.ToDouble(orderPrice) * 1.2;
-          buyInvestment += (Convert.ToInt32(amountBought) - Convert.ToInt32(totalToBuy)) * Convert.ToDouble(orderPrice) * 1.2;
+          totalInvested += Convert.ToInt32(amountBought) * Convert.ToDouble(orderPrice) * 1.1;
+          buyInvestment += (Convert.ToInt32(amountBought) - Convert.ToInt32(totalToBuy)) * Convert.ToDouble(orderPrice) * 1.1;
         }
       }
       if (sellOrderCountInGame>0) {
