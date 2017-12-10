@@ -55,7 +55,7 @@ try {
     using(var reader = new StreamReader(fileStream)) {
       while (!reader.EndOfStream) {
         var line = reader.ReadLine();
-        var values = Regex.Split(line, @"\t ");
+        var values = Regex.Split(line, @"\t");
 
         string itemName = values[0];
         string itemQuantity = values[1];
