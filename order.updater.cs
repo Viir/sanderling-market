@@ -291,7 +291,7 @@ double CalcMinPrice(double startPrice, double lowestPrice, double margin) {
   if (lowestPrice<0.01) {
     answer = Math.Round(startPrice * (1 - (margin / 100)), 2);
   }
-  Host.Log("Start=" + startPrice.ToString() + " Answer=" + answer.ToString() + " M=" + margin.ToString());
+  //Host.Log("Start=" + startPrice.ToString() + " Answer=" + answer.ToString() + " M=" + margin.ToString());
   return answer;
 }
 
@@ -301,7 +301,7 @@ double CalcMaxPrice(double startPrice, double highestPrice, double margin) {
   if (highestPrice<0.01) {
     answer = Math.Round(startPrice * (1 + (margin / 100)), 2);
   }
-  Host.Log("Start=" + startPrice.ToString() + " Answer=" + answer.ToString() + " M=" + margin.ToString());
+  //Host.Log("Start=" + startPrice.ToString() + " Answer=" + answer.ToString() + " M=" + margin.ToString());
   return answer;
 }
 
