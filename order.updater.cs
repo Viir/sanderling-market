@@ -181,7 +181,7 @@ try {
             
             //Create a new FileOrderEntry here
             double minPrice = 0.0;
-            double maxPrice = CalcMinPrice(Convert.ToDouble(itemSellPrice), 0.0, defaultMargin);
+            double maxPrice = CalcMaxPrice(newPrice, 0.0, defaultMargin);
             
             FileOrderEntry newFileOrder = new FileOrderEntry(itemName, "Buy Order", newPrice, minPrice, maxPrice, defaultMargin, 0, 0.0, DateTime.Now, DateTime.Now, 0, false);
             fileOrderEntries.Add(newFileOrder);
@@ -291,6 +291,7 @@ double CalcMinPrice(double startPrice, double lowestPrice, double margin) {
   if (lowestPrice<0.01) {
     answer = Math.Round(startPrice * (1 - (margin / 100)), 2);
   }
+  Host.Log("Start=" + startPrice.ToString() + " Answer=" + answer.ToString() + " M=" + margin.ToString());
   return answer;
 }
 
@@ -300,6 +301,7 @@ double CalcMaxPrice(double startPrice, double highestPrice, double margin) {
   if (highestPrice<0.01) {
     answer = Math.Round(startPrice * (1 + (margin / 100)), 2);
   }
+  Host.Log("Start=" + startPrice.ToString() + " Answer=" + answer.ToString() + " M=" + margin.ToString());
   return answer;
 }
 
@@ -641,15 +643,10 @@ for (;;) {
             double maxPrice = CalcMaxPrice(orderPriceDbl, 0.0, defaultMargin);
             
             double useMinPrice = 0.0;
-            //System.Windows.Forms.DialogResult dialogResult = System.Windows.Forms.MessageBox.Show("Use auto calc value of: " + @String.Format("{0:N}", firstPriceDbl.ToString()), "Check lowest selling price", System.Windows.Forms.MessageBoxButtons.YesNo);
-            //if(dialogResult == System.Windows.Forms.DialogResult.Yes)
-            //{
-                useMinPrice = firstPriceDbl;
-            //}
-            //else if (dialogResult == System.Windows.Forms.DialogResult.No)
-            //{
-               // useMinPrice = minPrice;
-            //}              
+            // Can either use the first seller's price - margin or the price we've set - margin. Can't remember why I used the first setting
+            //useMinPrice = firstPriceDbl;
+            useMinPrice = minPrice;
+
             FileOrderEntry newFileOrder = new FileOrderEntry(gameOrderName, "Sell Order", orderPriceDbl, useMinPrice, maxPrice, defaultMargin, 0, 0.0, DateTime.Now, DateTime.Now, 0, false);
             fileOrderEntries.Add(newFileOrder);
 
