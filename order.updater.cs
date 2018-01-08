@@ -169,6 +169,23 @@ try {
             Host.Delay(500);
             Sanderling.TextEntry(itemQuantity);
             Host.Delay(1000);
+
+            //Read new price and check it is ok
+            Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+            string enteredNewValueStr = Measurement?.WindowMarketAction?.FirstOrDefault()?.InputText?.FirstOrDefault()?.Text?.ToString();
+            enteredNewValueStr = enteredNewValueStr.Replace(@",", "");
+            double enteredNewValueDbl = Convert.ToDouble(enteredNewValueStr);
+            var ListOfInputs = Measurement?.WindowMarketAction?.FirstOrDefault()?.InputText?.ToArray();
+            
+            //Host.Log(Math.Abs(newPrice - enteredNewValueDbl).ToString() + " " + ListOfInputs[1].Text?.ToString());
+            
+            if (Math.Abs(newPrice - enteredNewValueDbl) > 1 || !itemQuantity.Equals(ListOfInputs[1].Text?.ToString())) {
+              Console.Beep(700, 200);
+              Console.Beep(700, 200);
+              Console.Beep(700, 200);
+              Host.Log("Price or Quantity wrong.");
+              Host.Break();
+            }
             
             Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
             var ButtonOK = Measurement?.WindowMarketAction?.FirstOrDefault()?.ButtonText?.FirstOrDefault(button=>(button?.Text).RegexMatchSuccessIgnoreCase("buy"));
@@ -1273,7 +1290,25 @@ for (;;) {
             string bluePriceStr = bluePriceArray[2].Value.Substring(0, bluePriceArray[2].Value.Length - 4);
             bluePriceStr = bluePriceStr.Replace(@",", "");
             double bluePriceDbl = Convert.ToDouble(bluePriceStr);
-
+            
+            var FirstBlack = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.SelectedItemTypeDetails?.MarketData?.SellerView?.Entry?.FirstOrDefault(ContainsBlackBackground);
+            if (FirstBlack != null) {
+              var BlackPriceArray = FirstBlack?.ListColumnCellLabel?.ToArray();
+              string BlackPriceStr = BlackPriceArray[2].Value.Substring(0, BlackPriceArray[2].Value.Length - 4);
+              BlackPriceStr = BlackPriceStr.Replace(@",", "");
+              double BlackPriceDbl = Convert.ToDouble(BlackPriceStr);
+              double currentMargin = (((BlackPriceDbl - bluePriceDbl) / BlackPriceDbl) * 100) - 2.34 - 1;
+              if (currentMargin < 10) {
+                Host.Log("Current Margin: " + currentMargin.ToString("#.##"));
+                Console.Beep(500, 100);
+                Console.Beep(800, 100);
+                Console.Beep(500, 100);
+                Console.Beep(800, 100);
+                Console.Beep(500, 100);
+                fileOrderEntry.OutOfPriceRange = true;
+              }
+            }
+            
             var greenPriceArray = FirstGreen?.ListColumnCellLabel?.ToArray();
             string greenPriceStr = greenPriceArray[2].Value.Substring(0, greenPriceArray[2].Value.Length - 4);
             greenPriceStr = greenPriceStr.Replace(@",", "");
