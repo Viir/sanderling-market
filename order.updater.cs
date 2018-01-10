@@ -127,10 +127,10 @@ void ReadMarketLog(List<FileOrderEntry> fileOrderEntries) {
         var values = line.Split(',');
         try {
           if (!values[0].ToString().Equals("Blank")) {
-            double minPrice = CalcMinPrice(Convert.ToDouble(values[3]), Convert.ToDouble(values[5]), defaultMargin);
-            double maxPrice = CalcMaxPrice(Convert.ToDouble(values[3]), Convert.ToDouble(values[7]), defaultMargin);
+            double minPrice = CalcMinPrice(Convert.ToDouble(values[3]), Convert.ToDouble(values[5]), Constants.Defaults.defaultMargin);
+            double maxPrice = CalcMaxPrice(Convert.ToDouble(values[3]), Convert.ToDouble(values[7]), Constants.Defaults.defaultMargin);
 
-            FileOrderEntry newFileOrder = new FileOrderEntry(values[0].ToString(), values[1].ToString(), Convert.ToDouble(values[3]), minPrice, maxPrice, defaultMargin, 0, 0.00, Convert.ToDateTime(values[9]), Convert.ToDateTime(values[11]), Convert.ToInt32(values[13]), Convert.ToBoolean(values[15]));
+            FileOrderEntry newFileOrder = new FileOrderEntry(values[0].ToString(), values[1].ToString(), Convert.ToDouble(values[3]), minPrice, maxPrice, Constants.Defaults.defaultMargin, 0, 0.00, Convert.ToDateTime(values[9]), Convert.ToDateTime(values[11]), Convert.ToInt32(values[13]), Convert.ToBoolean(values[15]));
             fileOrderEntries.Add(newFileOrder);
           }
         } catch {
@@ -167,10 +167,9 @@ void ReadMarketOrders(List<FileOrderEntry> fileOrderEntries) {
             }
           }
           if (foundItem == false) {
-            ClickMyOrders();
-            
             Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
-            myOrders = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.MyOrders;
+            MarketMyOrders myOrders = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.MyOrders;
+            myOrders = ClickMyOrders();
             if (myOrders?.BuyOrderView != null && myOrders?.SellOrderView != null) {
               Sanderling.MouseClickLeft(Measurement?.WindowRegionalMarket?.FirstOrDefault()?.InputText?.FirstOrDefault()?.RegionInteraction);
               Sanderling.KeyboardPressCombined(new[] {
@@ -280,9 +279,9 @@ void ReadMarketOrders(List<FileOrderEntry> fileOrderEntries) {
               
               //Create a new FileOrderEntry here
               double minPrice = 0.0;
-              double maxPrice = CalcMaxPrice(newPrice, 0.0, defaultMargin);
+              double maxPrice = CalcMaxPrice(newPrice, 0.0, Constants.Defaults.defaultMargin);
               
-              FileOrderEntry newFileOrder = new FileOrderEntry(itemName, "Buy Order", newPrice, minPrice, maxPrice, defaultMargin, 0, 0.0, DateTime.Now, DateTime.Now, 0, false);
+              FileOrderEntry newFileOrder = new FileOrderEntry(itemName, "Buy Order", newPrice, minPrice, maxPrice, Constants.Defaults.defaultMargin, 0, 0.0, DateTime.Now, DateTime.Now, 0, false);
               fileOrderEntries.Add(newFileOrder);
 
               WriteOrderListToFile(fileOrderEntries);
@@ -296,7 +295,7 @@ void ReadMarketOrders(List<FileOrderEntry> fileOrderEntries) {
     Host.Log(ex.ToString());
   }
   
-  ClearMarketOrdersFile()
+  ClearMarketOrdersFile();
   
 }
 
@@ -336,10 +335,10 @@ bool ClickMenuEntryOnMenuRootJason(IUIElement MenuRoot, string MenuEntryRegexPat
   if (MenuRoot == null) {
     Host.Log("Fatal: Right click menu item is null");
   }
-
+  
   Sanderling.MouseClickRight(MenuRoot);
   Host.Delay(1000);
-  Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+  var Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
   var Menu = Measurement?.Menu?.FirstOrDefault();
   var MenuEntry = Menu?.EntryFirstMatchingRegexPattern(MenuEntryRegexPattern, RegexOptions.IgnoreCase);
 
@@ -502,12 +501,12 @@ void CheckPriceColumnHeader() {
 }
 
 
-void ClickMyOrders() {
+MarketMyOrders ClickMyOrders() {
   Sanderling.MouseClickLeft(Measurement?.WindowRegionalMarket?.FirstOrDefault()?.RightTabGroup?.ListTab[2]?.RegionInteraction);
 
   //Wait for MyOrders to be populated
   Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
-  var myOrders = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.MyOrders;
+  MarketMyOrders myOrders = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.MyOrders;
   while (myOrders == null) {
     Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
     Sanderling.MouseClickLeft(Measurement?.WindowRegionalMarket?.FirstOrDefault()?.RightTabGroup?.ListTab[2]?.RegionInteraction);
@@ -515,6 +514,7 @@ void ClickMyOrders() {
     Host.Delay(500);
   }
   Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+  return myOrders;
 }      
 
 
@@ -522,6 +522,8 @@ void DoStartUp(List<FileOrderEntry> fileOrderEntries) {
 
   //Allow time to move the mouse after starting application.
   Host.Delay(5000);
+  
+  ClickMyOrders();
 
   //Read in existing orders
   ReadMarketLog(fileOrderEntries);
@@ -601,10 +603,10 @@ bool AddAnyMissingBuyOrdersToList(int buyOrderCountInGame, List<FileOrderEntry> 
         string orderPrice = orderTextSplit[2].Substring(7, orderTextSplit[2].Length - 4 - 7);
         orderPrice = orderPrice.Replace(@",", "");
         double orderPriceDbl = Convert.ToDouble(orderPrice);
-        double minPrice = CalcMinPrice(orderPriceDbl, 0.0, defaultMargin);
-        double maxPrice = CalcMaxPrice(orderPriceDbl, 0.0, defaultMargin);
+        double minPrice = CalcMinPrice(orderPriceDbl, 0.0, Constants.Defaults.defaultMargin);
+        double maxPrice = CalcMaxPrice(orderPriceDbl, 0.0, Constants.Defaults.defaultMargin);
           
-        FileOrderEntry newFileOrder = new FileOrderEntry(gameOrderName, "Buy Order", orderPriceDbl, minPrice, maxPrice, defaultMargin, 0, 0.0, DateTime.Now, DateTime.Now, 0, false);
+        FileOrderEntry newFileOrder = new FileOrderEntry(gameOrderName, "Buy Order", orderPriceDbl, minPrice, maxPrice, Constants.Defaults.defaultMargin, 0, 0.0, DateTime.Now, DateTime.Now, 0, false);
         fileOrderEntries.Add(newFileOrder);
 
         //Print details for checking
@@ -620,6 +622,7 @@ bool AddAnyMissingBuyOrdersToList(int buyOrderCountInGame, List<FileOrderEntry> 
 bool AddAnyMissingSellOrdersToList(int sellOrderCountInGame, List<FileOrderEntry> fileOrderEntries, MemoryStruct.IListEntry[] sellOrdersInGame) {
 
   bool foundNew = false;
+
   if (sellOrderCountInGame>0) {
     foreach(MemoryStruct.MarketOrderEntry sellOrderInGame in sellOrdersInGame) {
       string orderText = sellOrderInGame.LabelText.FirstOrDefault().Text.ToString();
@@ -663,23 +666,21 @@ bool AddAnyMissingSellOrdersToList(int sellOrderCountInGame, List<FileOrderEntry
         string firstPriceStr = firstPriceArray[2].Value.Substring(0, firstPriceArray[2].Value.Length - 4);
         firstPriceStr = firstPriceStr.Replace(@",", "");
         double firstPriceDbl = Convert.ToDouble(firstPriceStr);
-        firstPriceDbl = CalcMaxPrice(firstPriceDbl, 0.0, defaultMargin);
-        
-        ClickMyOrders();
+        firstPriceDbl = CalcMaxPrice(firstPriceDbl, 0.0, Constants.Defaults.defaultMargin);
         
         // Add details to FileOrderEntry object
         string orderPrice = orderTextSplit[2].Substring(7, orderTextSplit[2].Length - 4 - 7);
         orderPrice = orderPrice.Replace(@",", "");
         double orderPriceDbl = Convert.ToDouble(orderPrice);
-        double minPrice = CalcMinPrice(orderPriceDbl, 0.0, defaultMargin);
-        double maxPrice = CalcMaxPrice(orderPriceDbl, 0.0, defaultMargin);
+        double minPrice = CalcMinPrice(orderPriceDbl, 0.0, Constants.Defaults.defaultMargin);
+        double maxPrice = CalcMaxPrice(orderPriceDbl, 0.0, Constants.Defaults.defaultMargin);
         
         double useMinPrice = 0.0;
         // Can either use the first seller's price - margin or the price we've set - margin. Can't remember why I used the first setting
         //useMinPrice = firstPriceDbl;
         useMinPrice = minPrice;
 
-        FileOrderEntry newFileOrder = new FileOrderEntry(gameOrderName, "Sell Order", orderPriceDbl, useMinPrice, maxPrice, defaultMargin, 0, 0.0, DateTime.Now, DateTime.Now, 0, false);
+        FileOrderEntry newFileOrder = new FileOrderEntry(gameOrderName, "Sell Order", orderPriceDbl, useMinPrice, maxPrice, Constants.Defaults.defaultMargin, 0, 0.0, DateTime.Now, DateTime.Now, 0, false);
         fileOrderEntries.Add(newFileOrder);
 
         //Print details for checking
@@ -714,13 +715,13 @@ void SingleBeep() {
   Console.Beep(700, 200);
 }
 
-public static class Util
-{
-    private static rnd = new Random();
-    public static int GetRandom()
-    {
-        return rnd.Next(12423, 15624);
-    }
+public static class Utils {
+
+  private static Random  rnd = new Random();
+  public static int GetRandom()
+  {
+    return rnd.Next(12423, 15624);
+  }
 }
 
 
@@ -743,12 +744,12 @@ Random rnd = new Random();
 DoStartUp(fileOrderEntries);
 
 //Main Program Loop
-ClickMyOrders();
+//ClickMyOrders(myOrders);
 
 for (;;) {
 
   Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
-  var myOrders = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.MyOrders;
+  MarketMyOrders myOrders = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.MyOrders;
   MemoryStruct.IListEntry[] buyOrdersInGame = myOrders?.BuyOrderView?.Entry?.ToArray();
   MemoryStruct.IListEntry[] sellOrdersInGame = myOrders?.SellOrderView?.Entry?.ToArray();
   int buyOrderCountInGame = buyOrdersInGame.Length;
@@ -758,9 +759,9 @@ for (;;) {
   if (myOrders?.BuyOrderView != null && myOrders?.SellOrderView != null) {
     CalculateProfits(buyOrderCountInGame, sellOrderCountInGame, buyOrdersInGame, sellOrdersInGame);
     do {
-      ClickMyOrders();
+      myOrders = ClickMyOrders();
       Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
-      myOrders = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.MyOrders;
+      //myOrders = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.MyOrders;
       buyOrdersInGame = myOrders?.BuyOrderView?.Entry?.ToArray();
       sellOrdersInGame = myOrders?.SellOrderView?.Entry?.ToArray();
       buyOrderCountInGame = buyOrdersInGame.Length;
@@ -768,7 +769,7 @@ for (;;) {
       foundNew = false;
       foundNew = AddAnyMissingBuyOrdersToList(buyOrderCountInGame, fileOrderEntries, buyOrdersInGame);
       foundNew = AddAnyMissingSellOrdersToList(sellOrderCountInGame, fileOrderEntries, sellOrdersInGame);
-    } while (foundNew == true)
+    } while (foundNew == true);
   }
 
   Something_has_gone_wrong: //label to jump back to if something goes wrong
@@ -808,7 +809,9 @@ for (;;) {
         Host.Delay(500);
       }
 
-      ClickMyOrders();
+      myOrders = ClickMyOrders();
+      
+      //myOrders = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.MyOrders;
       
       var orderSectionMyOrders = myOrders?.BuyOrderView;
       if (fileOrderEntry.Type.Equals("Sell Order")) {
@@ -837,7 +840,7 @@ for (;;) {
         orderName = fileOrderEntry.Name.ToString().Substring(0, fileOrderEntry.Name.IndexOf("("));
       }
       var getMatchingOrder = orderSectionMyOrders?.Entry?.FirstOrDefault(MatchingOrder);
-
+      
       bool foundOrder = false;
       if (getMatchingOrder != null) {
         foundOrder = true;
@@ -942,7 +945,7 @@ for (;;) {
         Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
         CheckPriceColumnHeader();
         Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
-	
+
         foreach(var button in Measurement?.WindowRegionalMarket?.FirstOrDefault()?.ButtonText) {
           if (button.Text.Equals("Export to File")) {
             Sanderling.MouseClickLeft(button.RegionInteraction);
@@ -1452,7 +1455,7 @@ for (;;) {
       CloseModalUIElement();
       CloseModalUIElement();
 
-      ClickMyOrders();
+      myOrders = ClickMyOrders();
       
       WriteOrderListToFile(fileOrderEntries);
     }
@@ -1466,6 +1469,6 @@ for (;;) {
 
   //Check every few seconds for item to be checked
   SingleBeep();
-  int delay = Util.GetRandom(); //rnd.Next(12423, 15624);
+  int delay = Utils.GetRandom();
   Host.Delay(delay);
 }
