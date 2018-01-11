@@ -8,17 +8,18 @@ using System.IO;
 
 //Note - Filter must be set to station only
 
-var Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
+Sanderling.Parse.IMemoryMeasurement Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
 bool ContainsBlueBackground(MemoryStruct.IListEntry Entry)=>Entry?.ListBackgroundColor?.Any(BackgroundColor=>111<BackgroundColor?.OMilli && 777<BackgroundColor?.BMilli && BackgroundColor?.RMilli<111 && BackgroundColor?.GMilli<111) ?? false;
 bool ContainsGreenBackground(MemoryStruct.IListEntry Entry)=>Entry?.ListBackgroundColor?.Any(BackgroundColor=>111<BackgroundColor?.OMilli && 777<BackgroundColor?.GMilli && BackgroundColor?.RMilli<111 && BackgroundColor?.BMilli<111) ?? false;
 bool ContainsBlackBackground(MemoryStruct.IListEntry Entry)=>Entry?.ListBackgroundColor?.Any(BackgroundColor=>BackgroundColor?.OMilli>450 && BackgroundColor?.BMilli>240 && BackgroundColor?.RMilli>240 && BackgroundColor?.GMilli>240) ?? true;
 bool MatchingOrder(MemoryStruct.IListEntry Entry)=>Entry?.LabelText?.Any(someText=>someText.Text.ToString().RegexMatchSuccess(orderName)) ?? false;
 IWindow ModalUIElement=>Measurement?.EnumerateReferencedUIElementTransitive()?.OfType<IWindow>()?.Where(window=>window?.isModal ?? false)?.OrderByDescending(window=>window?.InTreeIndex ?? int.MinValue)?.FirstOrDefault();
-MarketMyOrders myOrders = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.MyOrders;
+MarketMyOrders myOrders;
 List<FileOrderEntry> fileOrderEntries = new List<FileOrderEntry>();
-MemoryStruct.IListEntry[] buyOrdersInGame = myOrders?.BuyOrderView?.Entry?.ToArray();
-MemoryStruct.IListEntry[] sellOrdersInGame = myOrders?.SellOrderView?.Entry?.ToArray();
-var getMatchingOrder = orderSectionMyOrders?.Entry?.FirstOrDefault(MatchingOrder);
+MemoryStruct.IListEntry[] buyOrdersInGame;
+MemoryStruct.IListEntry[] sellOrdersInGame;
+Sanderling.Interface.MemoryStruct.IUIElement getMatchingOrder;
+var orderSectionMyOrders = myOrders?.BuyOrderView;
 
 string orderName = "";
 
@@ -176,7 +177,7 @@ void ReadMarketOrders(List<FileOrderEntry> fileOrderEntries) {
           if (foundItem == false) {
             Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
             myOrders = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.MyOrders;
-            myOrders = ClickMyOrders();
+            ClickMyOrders();
             if (myOrders?.BuyOrderView != null && myOrders?.SellOrderView != null) {
               Sanderling.MouseClickLeft(Measurement?.WindowRegionalMarket?.FirstOrDefault()?.InputText?.FirstOrDefault()?.RegionInteraction);
               Sanderling.KeyboardPressCombined(new[] {
@@ -508,7 +509,7 @@ void CheckPriceColumnHeader() {
 }
 
 
-ClickMyOrders() {
+void ClickMyOrders() {
   Sanderling.MouseClickLeft(Measurement?.WindowRegionalMarket?.FirstOrDefault()?.RightTabGroup?.ListTab[2]?.RegionInteraction);
 
   //Wait for MyOrders to be populated
@@ -740,7 +741,7 @@ public static class Utils {
 }
 
 
-bool CheckElapsedTime(string timeToCheck) {
+bool CheckElapsedTime(DateTime timeToCheck) {
 
   DateTime a = Convert.ToDateTime(@timeToCheck);
   DateTime b = DateTime.Now;
@@ -764,7 +765,7 @@ bool FindMatchingOrder(string orderType) {
   if (getMatchingOrder != null) {
     foundOrder = true;
   } else {
-    for( loopcount = 0; loopCount < 10; loopCount++) {
+    for(int loopCount = 0; loopCount < 10; loopCount++) {
       Host.Delay(200);
       Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
       myOrders = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.MyOrders;
@@ -816,14 +817,14 @@ for (;;) {
     CalculateProfits();
     do {
       Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
-      myOrders = ClickMyOrders();
+      ClickMyOrders();
       buyOrdersInGame = myOrders?.BuyOrderView?.Entry?.ToArray();
       sellOrdersInGame = myOrders?.SellOrderView?.Entry?.ToArray();
       buyOrderCountInGame = buyOrdersInGame.Length;
       sellOrderCountInGame = sellOrdersInGame.Length;
       foundNew = false;
-      foundNew = AddAnyMissingBuyOrdersToList(buyOrderCountInGame);
-      foundNew = AddAnyMissingSellOrdersToList(sellOrderCountInGame);
+      foundNew = AddAnyMissingBuyOrdersToList();
+      foundNew = AddAnyMissingSellOrdersToList();
     } while (foundNew == true);
   }
 
@@ -837,7 +838,7 @@ for (;;) {
   foreach(FileOrderEntry fileOrderEntry in fileOrderEntries) {
     
     //If five mins and 20s has passed since last update then process again
-    bool timeToCheck = CheckElapsedTime(@fileOrderEntry.UpdateTime);
+    bool timeToCheck = CheckElapsedTime(fileOrderEntry.UpdateTime);
     
     if (timeToCheck && !foundNew && fileOrderEntry.NotFound < 10) {
 
@@ -845,9 +846,9 @@ for (;;) {
 
       fileOrderEntry.OutOfPriceRange = false;
 
-      myOrders = ClickMyOrders();
+      ClickMyOrders();
       
-      var orderSectionMyOrders = myOrders?.BuyOrderView;
+      orderSectionMyOrders = myOrders?.BuyOrderView;
       if (fileOrderEntry.Type.Equals("Sell Order")) {
         orderSectionMyOrders = myOrders?.SellOrderView;
       }
@@ -1409,16 +1410,11 @@ for (;;) {
       CloseModalUIElement();
       CloseModalUIElement();
 
-      myOrders = ClickMyOrders();
+      ClickMyOrders();
       
       WriteOrderListToFile(fileOrderEntries);
     }
     Host.Log("Done: " + loopCount++.ToString() + " of " + totalOrders);
-  }
-
-  if (foundNew == true) {
-    foundNew = false;
-    WriteOrderListToFile(fileOrderEntries);
   }
 
   //Check every few seconds for item to be checked
