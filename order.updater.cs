@@ -25,6 +25,7 @@ public static class Constants {
   
   public static class Defaults {
     public const double defaultMargin = 15.0;    
+    public const int elapsedSeconds = 300;
   }
 }
 
@@ -715,12 +716,25 @@ void SingleBeep() {
   Console.Beep(700, 200);
 }
 
+
 public static class Utils {
 
   private static Random  rnd = new Random();
   public static int GetRandom()
   {
     return rnd.Next(12423, 15624);
+  }
+}
+
+
+bool CheckElapsedTime(string timeToCheck) {
+
+  DateTime a = Convert.ToDateTime(@timeToCheck);
+  DateTime b = DateTime.Now;
+  if (Math.Round(b.Subtract(a).TotalSeconds, 0) > Constants.Defaults.elapsedSeconds) {
+    return true;
+  } else {
+    return false;
   }
 }
 
@@ -782,13 +796,8 @@ for (;;) {
   foreach(FileOrderEntry fileOrderEntry in fileOrderEntries) {
     
     //If five mins and 20s has passed since last update then process again
-    bool timeToCheck = false;
-    DateTime a = Convert.ToDateTime(@fileOrderEntry.UpdateTime);
-    DateTime b = DateTime.Now;
-    if (Math.Round(b.Subtract(a).TotalSeconds, 0)>300) {
-      timeToCheck = true;
-    }
-
+    bool timeToCheck = CheckElapsedTime(@fileOrderEntry.UpdateTime);
+    
     if (timeToCheck && !foundNew && fileOrderEntry.NotFound < 10) {
 
       Host.Log("Time to check: " + fileOrderEntry.Name + " - " + fileOrderEntry.Type);
