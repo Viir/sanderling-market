@@ -803,24 +803,8 @@ for (;;) {
       Host.Log("Time to check: " + fileOrderEntry.Name + " - " + fileOrderEntry.Type);
 
       fileOrderEntry.OutOfPriceRange = false;
-      //Ensure Market Window is open
-      while (null == Measurement?.WindowRegionalMarket) {
-        if (null == Measurement?.WindowRegionalMarket) {
-          Sanderling.MouseClickLeft(Measurement?.Neocom?.MarketButton);
-        }
-        Host.Delay(2000);
-        Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
-      }
-
-      //Wait for My Orders Button to appear
-      while (Measurement?.WindowRegionalMarket?.FirstOrDefault()?.RightTabGroup?.ListTab[2]?.RegionInteraction == null) {
-        Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
-        Host.Delay(500);
-      }
 
       myOrders = ClickMyOrders();
-      
-      //myOrders = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.MyOrders;
       
       var orderSectionMyOrders = myOrders?.BuyOrderView;
       if (fileOrderEntry.Type.Equals("Sell Order")) {
