@@ -625,6 +625,10 @@ bool AddAnyMissingBuyOrdersToList() {
         //Print details for checking
         Host.Log("Name: " + newFileOrder.Name + "  Price: " + newFileOrder.StartPrice + "  Type: " + newFileOrder.Type + "  Max Price: " + newFileOrder.HighestPrice);
         foundNew = true;
+
+        WriteOrderListToFile(fileOrderEntries);
+        ClickMyOrders();
+        break;
       }
     }
   }
@@ -703,6 +707,8 @@ bool AddAnyMissingSellOrdersToList() {
         foundNew = true;
 
         WriteOrderListToFile(fileOrderEntries);
+        ClickMyOrders();
+        break;
       }
     }
   }
@@ -801,10 +807,9 @@ Random rnd = new Random();
 DoStartUp(fileOrderEntries);
 
 //Main Program Loop
-//ClickMyOrders(myOrders);
-
 for (;;) {
 
+  ClickMyOrders();
   Measurement = Sanderling?.MemoryMeasurementParsed?.Value;
   myOrders = Measurement?.WindowRegionalMarket?.FirstOrDefault()?.MyOrders;
   buyOrdersInGame = myOrders?.BuyOrderView?.Entry?.ToArray();
